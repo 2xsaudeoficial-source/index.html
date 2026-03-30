@@ -2,41 +2,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Eye Runner Precision</title>
+  <title>Eye Focus Doors</title>
   <style>
-    :root{
-      --bg:#07111f;--panel:rgba(10,19,36,.92);--line:rgba(255,255,255,.08);--text:#eef4ff;--muted:#98a9c8;
-      --primary:#4f8cff;--cyan:#22d3ee;--good:#22c55e;--warn:#f59e0b;--bad:#f43f5e;
-    }
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);
-      background:radial-gradient(circle at top left, rgba(79,140,255,.22), transparent 28%),radial-gradient(circle at top right, rgba(34,211,238,.18), transparent 24%),linear-gradient(180deg,#08111f,#050b14 100%);min-height:100vh}
-    .app{max-width:1320px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+    :root{--bg:#07111f;--panel:rgba(10,19,36,.94);--line:rgba(255,255,255,.08);--text:#eef4ff;--muted:#98a9c8;--primary:#4f8cff;--cyan:#22d3ee;--good:#22c55e;--warn:#f59e0b;--bad:#f43f5e}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:radial-gradient(circle at top left, rgba(79,140,255,.22), transparent 28%),radial-gradient(circle at top right, rgba(34,211,238,.18), transparent 24%),linear-gradient(180deg,#08111f,#050b14 100%);min-height:100vh}
+    .app{max-width:1320px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1.12fr .88fr;gap:16px}
     .panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 18px 48px rgba(0,0,0,.28);backdrop-filter:blur(12px)}
     .hero{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
-    .hero h1{margin:0;font-size:1.35rem}.hero p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
-    .pillbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.pill{padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);min-width:110px}
-    .pill span{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.pill strong{font-size:1rem}
-    .stage-wrap{padding:16px}.camera{position:relative;height:320px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:#02070f;margin-bottom:14px}
-    #video,#faceCanvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#video{transform:scaleX(-1)}#faceCanvas{pointer-events:none}
+    .hero h1{margin:0;font-size:1.35rem}.hero p{margin:4px 0 0;color:var(--muted);font-size:.92rem}.pillbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.pill{padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);min-width:110px}.pill span{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.pill strong{font-size:1rem}
+    .stage-wrap{padding:16px}.camera{position:relative;height:280px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:#02070f;margin-bottom:14px}.game{position:relative;height:420px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#0b1730,#09111f 70%,#07101b 100%)}
+    #video,#faceCanvas,#gameCanvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover} #video{transform:scaleX(-1)} #faceCanvas{pointer-events:none} #gameCanvas{object-fit:fill}
     .camera-badge{position:absolute;left:14px;top:14px;z-index:3;background:rgba(3,8,18,.76);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:.86rem;max-width:88%}
-    .camera-guide{position:absolute;inset:0;pointer-events:none;z-index:2}
-    .guide-frame{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42%;height:62%;border:2px dashed rgba(255,255,255,.34);border-radius:26px;box-shadow:0 0 0 9999px rgba(0,0,0,.05) inset}
-    .guide-frame.good{border-color:rgba(34,197,94,.8);box-shadow:0 0 0 2px rgba(34,197,94,.18),0 0 0 9999px rgba(0,0,0,.03) inset}
-    .guide-frame.warn{border-color:rgba(245,158,11,.85)}
-    .guide-frame.bad{border-color:rgba(244,63,94,.85)}
-    .guide-center-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.7);box-shadow:0 0 0 8px rgba(255,255,255,.08)}
-    .guide-hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:8px 12px;border-radius:12px;background:rgba(3,8,18,.72);border:1px solid var(--line);font-size:.84rem;color:var(--muted);white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
-    .game{position:relative;height:380px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#0b1730,#09111f 70%,#07101b 100%)}
-    .hud{position:absolute;left:12px;right:12px;top:12px;z-index:4;display:flex;justify-content:space-between;gap:10px;align-items:center}.hudbox{padding:10px 12px;background:rgba(3,8,18,.7);border:1px solid var(--line);border-radius:14px;font-size:.9rem}
-    #gameCanvas{position:absolute;inset:0;width:100%;height:100%}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-    button,select{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--line);font-weight:700;background:rgba(255,255,255,.05);color:var(--text)}
-    button{cursor:pointer;background:linear-gradient(135deg,var(--primary),#7ca8ff);border:0}button.secondary{background:rgba(255,255,255,.05);border:1px solid var(--line)}
-    .side{padding:16px;display:grid;gap:14px}.card{padding:16px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid var(--line)}.card h3{margin:0 0 10px;font-size:1rem}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{padding:14px;border-radius:16px;background:rgba(7,11,22,.68);border:1px solid rgba(255,255,255,.05)}
-    .metric small{display:block;color:var(--muted);margin-bottom:6px;text-transform:uppercase;font-size:.72rem;letter-spacing:.06em}.metric strong{font-size:1.35rem}.note{color:var(--muted);line-height:1.55;font-size:.92rem} ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.55}
-    .calib-steps{display:grid;gap:8px}.step{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:.9rem}.step.active{border-color:rgba(79,140,255,.7);background:rgba(79,140,255,.12)}.step.done{border-color:rgba(34,197,94,.6);background:rgba(34,197,94,.12)}
-    @media (max-width:980px){.app{grid-template-columns:1fr}.camera{height:260px}.game{height:340px}}
-    @media (max-width:640px){.hero{flex-direction:column;align-items:flex-start}.controls,.grid{grid-template-columns:1fr}.camera{height:220px}.game{height:300px}}
+    .camera-guide{position:absolute;inset:0;pointer-events:none;z-index:2}.guide-frame{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42%;height:62%;border:2px dashed rgba(255,255,255,.34);border-radius:26px}.guide-frame.good{border-color:rgba(34,197,94,.8)}.guide-frame.warn{border-color:rgba(245,158,11,.85)}.guide-frame.bad{border-color:rgba(244,63,94,.85)}.guide-hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:8px 12px;border-radius:12px;background:rgba(3,8,18,.72);border:1px solid var(--line);font-size:.84rem;color:var(--muted);white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+    .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px} button,select{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--line);font-weight:700;background:rgba(255,255,255,.05);color:var(--text)} button{cursor:pointer;background:linear-gradient(135deg,var(--primary),#7ca8ff);border:0}button.secondary{background:rgba(255,255,255,.05);border:1px solid var(--line)}
+    .side{padding:16px;display:grid;gap:14px}.card{padding:16px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid var(--line)}.card h3{margin:0 0 10px;font-size:1rem}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{padding:14px;border-radius:16px;background:rgba(7,11,22,.68);border:1px solid rgba(255,255,255,.05)}.metric small{display:block;color:var(--muted);margin-bottom:6px;text-transform:uppercase;font-size:.72rem;letter-spacing:.06em}.metric strong{font-size:1.35rem}.note{color:var(--muted);line-height:1.55;font-size:.92rem} ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.55}.calib-steps{display:grid;gap:8px}.step{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:.9rem}.step.active{border-color:rgba(79,140,255,.7);background:rgba(79,140,255,.12)}.step.done{border-color:rgba(34,197,94,.6);background:rgba(34,197,94,.12)}
+    @media (max-width:980px){.app{grid-template-columns:1fr}.camera{height:240px}.game{height:360px}} @media (max-width:640px){.hero{flex-direction:column;align-items:flex-start}.controls,.grid{grid-template-columns:1fr}.camera{height:210px}.game{height:320px}}
   </style>
 </head>
 <body>
@@ -44,14 +24,14 @@
     <section class="panel">
       <div class="hero">
         <div>
-          <h1>Eye Runner Precision</h1>
-          <p>Versão refinada com calibração de 3 pontos, filtro temporal e controle híbrido mais preciso.</p>
+          <h1>Eye Focus Doors</h1>
+          <p>Jogo de seleção por olhar fixo. Muito mais preciso no celular do que movimento contínuo.</p>
         </div>
         <div class="pillbar">
           <div class="pill"><span>Status</span><strong id="statusText">Pronto</strong></div>
           <div class="pill"><span>Pontos</span><strong id="scoreText">0</strong></div>
-          <div class="pill"><span>Vidas</span><strong id="livesText">3</strong></div>
-          <div class="pill"><span>Direção</span><strong id="directionText">Centro</strong></div>
+          <div class="pill"><span>Erros</span><strong id="mistakesText">0</strong></div>
+          <div class="pill"><span>Olhar</span><strong id="directionText">Centro</strong></div>
         </div>
       </div>
       <div class="stage-wrap">
@@ -60,16 +40,11 @@
           <canvas id="faceCanvas"></canvas>
           <div class="camera-guide">
             <div class="guide-frame warn" id="guideFrame"></div>
-            <div class="guide-center-dot"></div>
             <div class="guide-hint" id="guideHint">Posicione o rosto dentro da moldura.</div>
           </div>
           <div class="camera-badge" id="cameraBadge">Ligue a câmera e faça a calibração.</div>
         </div>
         <div class="game">
-          <div class="hud">
-            <div class="hudbox">Controle: <strong id="controlMode">Híbrido</strong></div>
-            <div class="hudbox">Piscar: <strong id="blinkState">Não</strong></div>
-          </div>
           <canvas id="gameCanvas"></canvas>
         </div>
         <div class="controls">
@@ -94,9 +69,9 @@
     <h3>Métricas do rastreio</h3>
     <div class="grid">
       <div class="metric"><small>Confiança</small><strong id="confidenceText">0%</strong></div>
-      <div class="metric"><small>Sinal final</small><strong id="tiltText">0.00</strong></div>
-      <div class="metric"><small>Olho E</small><strong id="leftEyeText">0.00</strong></div>
-      <div class="metric"><small>Olho D</small><strong id="rightEyeText">0.00</strong></div>
+      <div class="metric"><small>Sinal final</small><strong id="signalText">0.00</strong></div>
+      <div class="metric"><small>Progresso olhar</small><strong id="dwellText">0%</strong></div>
+      <div class="metric"><small>Zona alvo</small><strong id="targetText">-</strong></div>
     </div>
   </div>
   <div class="card">
@@ -109,20 +84,21 @@
   </div>
   <div class="card">
     <h3>Observações</h3>
-    <div class="note" id="observationText">A câmera ainda não foi iniciada.</div>
+    <div class="note" id="observationText">Esse jogo usa olhar fixo em zonas discretas. É mais robusto no celular.</div>
   </div>
   <div class="card">
-    <h3>Onde colocar no GitHub</h3>
+    <h3>Como jogar</h3>
     <ul>
-      <li>Salve tudo como <strong>index.html</strong>.</li>
-      <li>Envie o arquivo para a raiz do repositório.</li>
-      <li>Ative o GitHub Pages em <strong>Settings → Pages</strong>.</li>
+      <li>Veja em qual porta aparece a estrela.</li>
+      <li>Olhe para a porta correta e mantenha o olhar por um instante.</li>
+      <li>Quando a barra completar, a escolha é feita.</li>
+      <li>Você ganha precisão porque não precisa arrastar personagem.</li>
     </ul>
   </div>
 </aside>
 
   </div>  <script type="module">
-    import { FaceLandmarker, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs';
+    import { FaceLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs';
 
     const video = document.getElementById('video');
     const faceCanvas = document.getElementById('faceCanvas');
@@ -132,16 +108,16 @@
 
     const statusText = document.getElementById('statusText');
     const scoreText = document.getElementById('scoreText');
-    const livesText = document.getElementById('livesText');
+    const mistakesText = document.getElementById('mistakesText');
     const directionText = document.getElementById('directionText');
     const confidenceText = document.getElementById('confidenceText');
-    const tiltText = document.getElementById('tiltText');
-    const leftEyeText = document.getElementById('leftEyeText');
-    const rightEyeText = document.getElementById('rightEyeText');
+    const signalText = document.getElementById('signalText');
+    const dwellText = document.getElementById('dwellText');
+    const targetText = document.getElementById('targetText');
     const observationText = document.getElementById('observationText');
-    const blinkState = document.getElementById('blinkState');
     const cameraBadge = document.getElementById('cameraBadge');
-    const controlMode = document.getElementById('controlMode');
+    const guideFrame = document.getElementById('guideFrame');
+    const guideHint = document.getElementById('guideHint');
 
     const difficultySelect = document.getElementById('difficultySelect');
     const controlSelect = document.getElementById('controlSelect');
@@ -153,29 +129,22 @@
     const stepCenter = document.getElementById('stepCenter');
     const stepLeft = document.getElementById('stepLeft');
     const stepRight = document.getElementById('stepRight');
-    const guideFrame = document.getElementById('guideFrame');
-    const guideHint = document.getElementById('guideHint');
 
-    let faceLandmarker, drawingUtils, stream, rafId, gameLoopId;
-    let lastVideoTime = -1, ready = false, gameStarted = false, blinkCooldown = 0;
-    let smooth = { head:0, eyes:0, final:0, leftEAR:0.28, rightEAR:0.28, conf:0.9 };
-    let calibration = {
-      active:false, stage:'idle', samples:{ center:[], left:[], right:[] }, values:null
+    let faceLandmarker, stream, rafId, gameRaf, lastVideoTime = -1;
+    let smooth = { head:0, eyes:0, final:0, conf:.9 };
+    let calibration = { active:false, stage:'idle', samples:{center:[],left:[],right:[]}, values:null };
+    let selection = { zone:'center', dwell:0, locked:false };
+
+    const game = {
+      w:0, h:0, started:false, score:0, mistakes:0, round:0,
+      promptZone:'center', answered:false, roundStart:0, roundLimit:5000, nextDelay:900
     };
-
-    const game = { w:0,h:0,player:{lane:1,y:0,dash:0},lanes:3,obstacles:[],stars:[],score:0,lives:3,speed:3.1,moveCooldown:0 };
 
     function resizeCanvases(){
       const rect = faceCanvas.getBoundingClientRect();
-      faceCanvas.width = rect.width;
-      faceCanvas.height = rect.height;
-
+      faceCanvas.width = rect.width; faceCanvas.height = rect.height;
       const grect = gameCanvas.getBoundingClientRect();
-      gameCanvas.width = grect.width;
-      gameCanvas.height = grect.height;
-      game.w = grect.width;
-      game.h = grect.height;
-      game.player.y = game.h - 70;
+      gameCanvas.width = grect.width; gameCanvas.height = grect.height; game.w = grect.width; game.h = grect.height;
     }
 
     async function setupFace(){
@@ -183,17 +152,12 @@
       statusText.textContent = 'Carregando IA';
       const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm');
       faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-        baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task' },
-        runningMode: 'VIDEO',
-        numFaces: 1,
-        minFaceDetectionConfidence: 0.7,
-        minFacePresenceConfidence: 0.7,
-        minTrackingConfidence: 0.7,
-        outputFaceBlendshapes: false,
-        outputFacialTransformationMatrixes: false
+        baseOptions: { modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task' },
+        runningMode:'VIDEO', numFaces:1,
+        minFaceDetectionConfidence:.7, minFacePresenceConfidence:.7, minTrackingConfidence:.7,
+        outputFaceBlendshapes:false, outputFacialTransformationMatrixes:false
       });
-      drawingUtils = new DrawingUtils(faceCtx);
-      ready = true; statusText.textContent = 'IA pronta';
+      statusText.textContent = 'IA pronta';
     }
 
     async function startCamera(){
@@ -201,19 +165,16 @@
         await setupFace();
         stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user', width:{ideal:1280}, height:{ideal:720} }, audio:false });
         video.srcObject = stream; await video.play(); resizeCanvases();
-        cameraBadge.textContent = 'Câmera ativa. Agora faça a calibração de 3 pontos.';
-        observationText.textContent = 'Câmera iniciada com thresholds mais altos para melhorar a precisão.';
+        cameraBadge.textContent = 'Câmera ativa. Faça a calibração de 3 pontos.';
         statusText.textContent = 'Câmera ativa';
       }catch(e){ statusText.textContent='Erro câmera'; observationText.textContent='Não foi possível acessar a câmera.'; }
     }
 
-    function dist(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
     function lerp(a,b,t){ return a + (b-a)*t; }
     function avg(arr){ return arr.length ? arr.reduce((s,v)=>s+v,0)/arr.length : 0; }
-
-    function eyeAspect(pts){
-      const [p1,p2,p3,p4,p5,p6]=pts; const vertical = dist(p2,p6)+dist(p3,p5); const horizontal = Math.max(dist(p1,p4),.0001); return vertical/(2*horizontal);
-    }
+    function clamp(v,min,max){ return Math.min(max, Math.max(min,v)); }
+    function dist(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
+    function eyeAspect(pts){ const [p1,p2,p3,p4,p5,p6]=pts; const vertical=dist(p2,p6)+dist(p3,p5); const horizontal=Math.max(dist(p1,p4),.0001); return vertical/(2*horizontal); }
 
     function setStepState(active){
       [stepCenter,stepLeft,stepRight].forEach(s=>s.className='step');
@@ -226,243 +187,174 @@
     }
 
     function beginCalibration(){
-      if(!video.srcObject){ observationText.textContent='Ligue a câmera antes da calibração.'; return; }
-      calibration.active = true; calibration.stage='center'; calibration.samples={center:[],left:[],right:[]}; calibration.values=null;
+      if(!video.srcObject){ observationText.textContent='Ligue a câmera antes.'; return; }
+      calibration = { active:true, stage:'center', samples:{center:[],left:[],right:[]}, values:null };
       setStepState('center');
-      cameraBadge.textContent = 'Calibração: olhe para o centro e mantenha o rosto estável.';
+      cameraBadge.textContent = 'Calibração: olhe para o centro.';
       observationText.textContent = 'Fase 1 de 3: olhando para o centro.';
     }
 
+    function normalizeWithCalibration(raw, left, center, right){
+      if(raw < center){ const denom = Math.max(center-left, .0001); return -Math.min(1, (center-raw)/denom); }
+      const denom = Math.max(right-center, .0001); return Math.min(1, (raw-center)/denom);
+    }
+
     function collectCalibrationSample(metrics){
-      if(!calibration.active) return;
-      if(metrics.conf < 0.8) return;
+      if(!calibration.active || !metrics.framingGood || metrics.conf < .8) return;
       const bucket = calibration.samples[calibration.stage];
-      bucket.push({ head: metrics.headRaw, eyes: metrics.eyeRaw });
+      bucket.push({ head:metrics.headRaw, eyes:metrics.eyeRaw });
       if(bucket.length >= 15){
-        if(calibration.stage==='center'){
-          calibration.stage='left'; setStepState('left'); cameraBadge.textContent='Calibração: olhe para a esquerda.'; observationText.textContent='Fase 2 de 3: olhando para a esquerda.';
-        } else if(calibration.stage==='left'){
-          calibration.stage='right'; setStepState('right'); cameraBadge.textContent='Calibração: olhe para a direita.'; observationText.textContent='Fase 3 de 3: olhando para a direita.';
-        } else {
-          calibration.active = false; calibration.stage='done';
+        if(calibration.stage==='center'){ calibration.stage='left'; setStepState('left'); cameraBadge.textContent='Calibração: olhe para a esquerda.'; observationText.textContent='Fase 2 de 3: olhando para a esquerda.'; }
+        else if(calibration.stage==='left'){ calibration.stage='right'; setStepState('right'); cameraBadge.textContent='Calibração: olhe para a direita.'; observationText.textContent='Fase 3 de 3: olhando para a direita.'; }
+        else {
+          calibration.active=false; calibration.stage='done';
           calibration.values = {
-            centerHead: avg(calibration.samples.center.map(s=>s.head)),
-            leftHead: avg(calibration.samples.left.map(s=>s.head)),
-            rightHead: avg(calibration.samples.right.map(s=>s.head)),
-            centerEyes: avg(calibration.samples.center.map(s=>s.eyes)),
-            leftEyes: avg(calibration.samples.left.map(s=>s.eyes)),
-            rightEyes: avg(calibration.samples.right.map(s=>s.eyes))
+            centerHead: avg(calibration.samples.center.map(s=>s.head)), leftHead: avg(calibration.samples.left.map(s=>s.head)), rightHead: avg(calibration.samples.right.map(s=>s.head)),
+            centerEyes: avg(calibration.samples.center.map(s=>s.eyes)), leftEyes: avg(calibration.samples.left.map(s=>s.eyes)), rightEyes: avg(calibration.samples.right.map(s=>s.eyes))
           };
-          setStepState(null);
-          cameraBadge.textContent='Calibração concluída com sucesso.';
-          observationText.textContent='Calibração pronta. O controle agora usa os seus intervalos reais de movimento.';
-          statusText.textContent='Calibrado';
+          setStepState(null); cameraBadge.textContent='Calibração concluída.'; observationText.textContent='Calibração pronta. Agora o jogo usa zonas discretas mais precisas.'; statusText.textContent='Calibrado';
         }
       }
     }
 
-    function normalizeWithCalibration(raw, left, center, right){
-      if(raw < center){ const denom = Math.max(center-left, 0.0001); return -Math.min(1, (center-raw)/denom); }
-      const denom = Math.max(right-center, 0.0001); return Math.min(1, (raw-center)/denom);
-    }
-
-    function drawFace(results){
-      const w = faceCanvas.width, h = faceCanvas.height;
-      faceCtx.clearRect(0,0,w,h);
+    function drawFaceGuide(results){
+      const w = faceCanvas.width, h = faceCanvas.height; faceCtx.clearRect(0,0,w,h);
       if(!results.faceLandmarks?.length) return;
-
       const lm = results.faceLandmarks[0];
-      const videoW = video.videoWidth || w;
-      const videoH = video.videoHeight || h;
-      const scale = Math.max(w / videoW, h / videoH);
-      const drawnW = videoW * scale;
-      const drawnH = videoH * scale;
-      const offsetX = (w - drawnW) / 2;
-      const offsetY = (h - drawnH) / 2;
-
-      faceCtx.save();
-      faceCtx.translate(w, 0);
-      faceCtx.scale(-1, 1);
-
-      const project = (p) => ({
-        x: offsetX + (p.x * videoW) * scale,
-        y: offsetY + (p.y * videoH) * scale
-      });
-
-      faceCtx.strokeStyle = 'rgba(96,165,250,.22)';
-      faceCtx.lineWidth = 1;
-      for (const pair of FaceLandmarker.FACE_LANDMARKS_TESSELATION) {
-        const p1 = project(lm[pair.start]);
-        const p2 = project(lm[pair.end]);
-        faceCtx.beginPath();
-        faceCtx.moveTo(p1.x, p1.y);
-        faceCtx.lineTo(p2.x, p2.y);
-        faceCtx.stroke();
-      }
-
-      [1, 33, 263, 468, 473].forEach((idx) => {
-        const p = project(lm[idx]);
-        faceCtx.fillStyle = '#22d3ee';
-        faceCtx.beginPath();
-        faceCtx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-        faceCtx.fill();
-        faceCtx.strokeStyle = '#ffffff';
-        faceCtx.lineWidth = 1;
-        faceCtx.stroke();
-      });
-
+      const videoW = video.videoWidth || w, videoH = video.videoHeight || h;
+      const scale = Math.max(w/videoW, h/videoH); const drawnW = videoW*scale; const drawnH = videoH*scale; const offsetX = (w-drawnW)/2; const offsetY = (h-drawnH)/2;
+      faceCtx.save(); faceCtx.translate(w,0); faceCtx.scale(-1,1);
+      const dots = [1,33,263,468,473].map(i=>lm[i]);
+      dots.forEach(p=>{ const x=offsetX + (p.x*videoW)*scale; const y=offsetY + (p.y*videoH)*scale; faceCtx.fillStyle='#22d3ee'; faceCtx.beginPath(); faceCtx.arc(x,y,3,0,Math.PI*2); faceCtx.fill(); });
       faceCtx.restore();
     }
 
     function analyzeFace(results){
-      if(!results.faceLandmarks?.length){
-        directionText.textContent='Sem rosto'; confidenceText.textContent='0%'; observationText.textContent='Rosto não detectado.';
-        guideFrame.className = 'guide-frame bad';
-        guideHint.textContent = 'Aproxime ou centralize o rosto na moldura.';
-        return;
-      }
+      if(!results.faceLandmarks?.length){ directionText.textContent='Sem rosto'; confidenceText.textContent='0%'; guideFrame.className='guide-frame bad'; guideHint.textContent='Aproxime ou centralize o rosto.'; return; }
       const lm = results.faceLandmarks[0];
-      const nose = lm[1], leftIris = lm[468], rightIris = lm[473];
-      const leftCheek = lm[234], rightCheek = lm[454], chin = lm[152], forehead = lm[10];
+      const nose = lm[1], leftIris = lm[468], rightIris = lm[473], leftCheek = lm[234], rightCheek = lm[454], chin = lm[152], forehead = lm[10];
+      const faceCenterX = (leftCheek.x + rightCheek.x)/2, faceCenterY = (forehead.y + chin.y)/2, faceWidth = Math.abs(rightCheek.x-leftCheek.x), faceHeight = Math.abs(chin.y-forehead.y);
+      const centeredX = Math.abs(faceCenterX-.5), centeredY = Math.abs(faceCenterY-.5), sizeOk = faceWidth>.18 && faceWidth<.42 && faceHeight>.26 && faceHeight<.72, centeredOk = centeredX<.08 && centeredY<.1, framingGood = sizeOk && centeredOk;
+      if(framingGood){ guideFrame.className='guide-frame good'; guideHint.textContent='Enquadramento ideal.'; }
+      else if(faceWidth<.18 || faceHeight<.26){ guideFrame.className='guide-frame warn'; guideHint.textContent='Aproxime o rosto.'; }
+      else if(faceWidth>.42 || faceHeight>.72){ guideFrame.className='guide-frame warn'; guideHint.textContent='Afaste o rosto.'; }
+      else if(faceCenterX<.42){ guideFrame.className='guide-frame warn'; guideHint.textContent='Mova para a direita da tela.'; }
+      else if(faceCenterX>.58){ guideFrame.className='guide-frame warn'; guideHint.textContent='Mova para a esquerda da tela.'; }
+      else { guideFrame.className='guide-frame warn'; guideHint.textContent='Ajuste o enquadramento.'; }
+
       const leftEyePts = [lm[33], lm[160], lm[158], lm[133], lm[153], lm[144]];
       const rightEyePts = [lm[362], lm[385], lm[387], lm[263], lm[373], lm[380]];
-      const leftEAR = eyeAspect(leftEyePts), rightEAR = eyeAspect(rightEyePts), avgEAR=(leftEAR+rightEAR)/2;
-      smooth.leftEAR = lerp(smooth.leftEAR,leftEAR,0.2); smooth.rightEAR = lerp(smooth.rightEAR,rightEAR,0.2);
-      leftEyeText.textContent = smooth.leftEAR.toFixed(2); rightEyeText.textContent = smooth.rightEAR.toFixed(2);
+      const ear = (eyeAspect(leftEyePts) + eyeAspect(rightEyePts)) / 2;
 
-      const conf = 0.92; smooth.conf = lerp(smooth.conf, conf, 0.15); confidenceText.textContent = `${Math.round(smooth.conf*100)}%`;
-      const faceCenterX = (leftCheek.x + rightCheek.x) / 2;
-      const faceCenterY = (forehead.y + chin.y) / 2;
-      const faceWidth = Math.abs(rightCheek.x - leftCheek.x);
-      const faceHeight = Math.abs(chin.y - forehead.y);
-      const centeredX = Math.abs(faceCenterX - 0.5);
-      const centeredY = Math.abs(faceCenterY - 0.5);
-      const sizeOk = faceWidth > 0.18 && faceWidth < 0.42 && faceHeight > 0.26 && faceHeight < 0.72;
-      const centeredOk = centeredX < 0.08 && centeredY < 0.1;
-      const framingGood = sizeOk && centeredOk;
-      if(framingGood){
-        guideFrame.className = 'guide-frame good';
-        guideHint.textContent = 'Enquadramento ideal.';
-      } else if(faceWidth < 0.18 || faceHeight < 0.26){
-        guideFrame.className = 'guide-frame warn';
-        guideHint.textContent = 'Aproxime o rosto da câmera.';
-      } else if(faceWidth > 0.42 || faceHeight > 0.72){
-        guideFrame.className = 'guide-frame warn';
-        guideHint.textContent = 'Afaste um pouco o rosto.';
-      } else if(faceCenterX < 0.42){
-        guideFrame.className = 'guide-frame warn';
-        guideHint.textContent = 'Mova o rosto para a direita da tela.';
-      } else if(faceCenterX > 0.58){
-        guideFrame.className = 'guide-frame warn';
-        guideHint.textContent = 'Mova o rosto para a esquerda da tela.';
-      } else if(faceCenterY < 0.4){
-        guideFrame.className = 'guide-frame warn';
-        guideHint.textContent = 'Abaixe um pouco o rosto.';
-      } else if(faceCenterY > 0.6){
-        guideFrame.className = 'guide-frame warn';
-        guideHint.textContent = 'Levante um pouco o rosto.';
-      } else {
-        guideFrame.className = 'guide-frame warn';
-        guideHint.textContent = 'Ajuste o enquadramento do rosto.';
-      }
-
-      const headRaw = nose.x - 0.5;
-      const eyeRaw = ((leftIris.x - nose.x) + (rightIris.x - nose.x)) / 2;
-      const metrics = { headRaw, eyeRaw, conf: smooth.conf, framingGood };
-      if(metrics.framingGood) collectCalibrationSample(metrics);
+      const conf = .92; smooth.conf = lerp(smooth.conf, conf, .15); confidenceText.textContent = `${Math.round(smooth.conf*100)}%`;
+      const headRaw = nose.x - .5;
+      const eyeRaw = ((leftIris.x - nose.x) + (rightIris.x - nose.x))/2;
+      const metrics = { headRaw, eyeRaw, conf:smooth.conf, framingGood };
+      collectCalibrationSample(metrics);
 
       let headNorm = headRaw * 6.5, eyeNorm = eyeRaw * 25;
       if(calibration.values){
         headNorm = normalizeWithCalibration(headRaw, calibration.values.leftHead, calibration.values.centerHead, calibration.values.rightHead);
         eyeNorm = normalizeWithCalibration(eyeRaw, calibration.values.leftEyes, calibration.values.centerEyes, calibration.values.rightEyes);
       }
+      smooth.head = lerp(smooth.head, headNorm, .14); smooth.eyes = lerp(smooth.eyes, eyeNorm, .12);
+      let finalSignal = controlSelect.value==='head' ? smooth.head : controlSelect.value==='eyes' ? smooth.eyes : smooth.head * .65 + smooth.eyes * .35;
+      smooth.final = lerp(smooth.final, finalSignal, .18);
+      signalText.textContent = smooth.final.toFixed(2);
 
-      smooth.head = lerp(smooth.head, headNorm, 0.14);
-      smooth.eyes = lerp(smooth.eyes, eyeNorm, 0.12);
+      let zone = 'center';
+      if(smooth.final < -0.34) zone = 'left';
+      if(smooth.final > 0.34) zone = 'right';
+      selection.zone = zone;
+      directionText.textContent = zone==='left' ? 'Esquerda' : zone==='right' ? 'Direita' : 'Centro';
 
-      const mode = controlSelect.value;
-      controlMode.textContent = mode==='head' ? 'Cabeça' : mode==='eyes' ? 'Olhos' : 'Híbrido';
-      let finalSignal = 0;
-      if(mode==='head') finalSignal = smooth.head;
-      else if(mode==='eyes') finalSignal = smooth.eyes;
-      else finalSignal = smooth.head * 0.65 + smooth.eyes * 0.35;
-      smooth.final = lerp(smooth.final, finalSignal, 0.18);
-      tiltText.textContent = smooth.final.toFixed(2);
+      if(!framingGood) observationText.textContent = `Enquadramento fora da zona ideal. ${guideHint.textContent}`;
+      else if(!calibration.values) observationText.textContent = 'Faça a calibração para máxima precisão.';
+      else observationText.textContent = 'Jogo pronto. Use olhar fixo para confirmar portas.';
 
-      let dirText='Centro';
-      if(smooth.final < -0.38) dirText='Esquerda';
-      if(smooth.final > 0.38) dirText='Direita';
-      directionText.textContent = dirText;
+      if(ear < .18 && game.started){ selection.dwell = Math.max(0, selection.dwell - 14); }
+    }
 
-      const blinkThreshold = 0.19;
-      const blinkDetected = avgEAR < blinkThreshold;
-      if(blinkDetected && blinkCooldown<=0){ blinkCooldown = 18; blinkState.textContent='Sim'; if(gameStarted) game.player.dash = 18; }
-      else blinkState.textContent = blinkCooldown>10 ? 'Sim' : 'Não';
-      if(blinkCooldown>0) blinkCooldown--;
+    function difficultyConfig(){
+      const d = difficultySelect.value;
+      return d==='easy' ? { dwellNeed: 50, roundLimit: 5600 } : d==='hard' ? { dwellNeed: 82, roundLimit: 3400 } : { dwellNeed: 64, roundLimit: 4400 };
+    }
 
-      if(gameStarted && game.moveCooldown<=0 && calibration.values && smooth.conf >= 0.8 && metrics.framingGood){
-        if(dirText==='Esquerda'){ game.player.lane = Math.max(0, game.player.lane - 1); game.moveCooldown = 8; }
-        if(dirText==='Direita'){ game.player.lane = Math.min(game.lanes - 1, game.player.lane + 1); game.moveCooldown = 8; }
+    function startGame(){
+      if(!video.srcObject){ observationText.textContent = 'Ligue a câmera antes.'; return; }
+      if(!calibration.values){ observationText.textContent = 'Faça a calibração antes para precisão adequada.'; return; }
+      if(game.started){ game.started = false; cancelAnimationFrame(gameRaf); startBtn.textContent = 'Iniciar jogo'; statusText.textContent='Parado'; return; }
+      game.started = true; game.score = 0; game.mistakes = 0; game.round = 0; selection.dwell = 0; selection.locked = false;
+      scoreText.textContent = '0'; mistakesText.textContent = '0'; startBtn.textContent = 'Encerrar jogo'; statusText.textContent = 'Jogando'; nextRound(); gameLoop();
+    }
+
+    function nextRound(){
+      const zones = ['left','center','right'];
+      game.promptZone = zones[Math.floor(Math.random()*3)];
+      game.answered = false; game.roundStart = performance.now(); game.round += 1; selection.dwell = 0; selection.locked = false; targetText.textContent = game.promptZone==='left' ? 'Esquerda' : game.promptZone==='right' ? 'Direita' : 'Centro';
+    }
+
+    function evaluateChoice(zone){
+      if(game.answered) return;
+      game.answered = true; selection.locked = true;
+      if(zone === game.promptZone){ game.score += 10; scoreText.textContent = String(game.score); statusText.textContent = 'Acertou'; observationText.textContent = 'Boa escolha. Próxima rodada em instantes.'; }
+      else { game.mistakes += 1; mistakesText.textContent = String(game.mistakes); statusText.textContent = 'Errou'; observationText.textContent = 'Escolha incorreta. Tente fixar melhor o olhar na próxima.'; }
+      setTimeout(() => { if(game.started) nextRound(); }, game.nextDelay);
+    }
+
+    function drawGame(){
+      const w = game.w, h = game.h; gameCtx.clearRect(0,0,w,h); gameCtx.fillStyle = '#0c1730'; gameCtx.fillRect(0,0,w,h);
+      const laneW = w / 3; const cfg = difficultyConfig(); game.roundLimit = cfg.roundLimit; const dwellNeed = cfg.dwellNeed;
+      const labels = ['ESQUERDA','CENTRO','DIREITA']; const zones = ['left','center','right'];
+      for(let i=0;i<3;i++){
+        const x = i * laneW + 14, y = 58, bw = laneW - 28, bh = h - 108;
+        const isTarget = zones[i] === game.promptZone; const isLook = zones[i] === selection.zone;
+        gameCtx.fillStyle = isTarget ? 'rgba(79,140,255,.14)' : 'rgba(255,255,255,.03)';
+        gameCtx.strokeStyle = isLook ? '#22d3ee' : 'rgba(255,255,255,.12)'; gameCtx.lineWidth = isLook ? 3 : 1;
+        roundRect(gameCtx, x, y, bw, bh, 24, true, true);
+        gameCtx.fillStyle = '#dbe7ff'; gameCtx.font = '700 18px Arial'; gameCtx.textAlign = 'center'; gameCtx.fillText(labels[i], x + bw/2, 92);
+        if(isTarget){ gameCtx.font = '60px Arial'; gameCtx.fillText('⭐', x + bw/2, y + bh/2 + 14); }
+        if(isLook){
+          const progress = zones[i] === selection.zone ? selection.dwell / dwellNeed : 0;
+          gameCtx.fillStyle = 'rgba(34,211,238,.18)'; roundRect(gameCtx, x + 18, h - 62, bw - 36, 18, 9, true, false);
+          gameCtx.fillStyle = '#22d3ee'; roundRect(gameCtx, x + 18, h - 62, Math.max(0, (bw - 36) * Math.min(progress,1)), 18, 9, true, false);
+        }
       }
 
-      if(!metrics.framingGood) {
-        observationText.textContent = `Enquadramento fora da zona ideal. ${guideHint.textContent}`;
-      } else if(!calibration.values) observationText.textContent = 'Faça a calibração para aumentar a precisão do controle.';
-      else if(dirText==='Centro') observationText.textContent = 'Rastreamento estável, calibrado e bem centralizado.';
-      else observationText.textContent = `Comando ${dirText.toLowerCase()} detectado com filtro temporal ativo.`;
+      const elapsed = performance.now() - game.roundStart; const remain = Math.max(0, 1 - elapsed / game.roundLimit);
+      gameCtx.fillStyle = 'rgba(255,255,255,.12)'; roundRect(gameCtx, 24, 18, w - 48, 16, 8, true, false);
+      gameCtx.fillStyle = remain > .35 ? '#4f8cff' : '#f43f5e'; roundRect(gameCtx, 24, 18, (w - 48) * remain, 16, 8, true, false);
+
+      if(!game.answered){
+        if(selection.zone !== 'center' || game.promptZone === 'center') selection.dwell += selection.zone === game.promptZone ? 1.35 : selection.zone !== 'center' ? .5 : .75;
+        else selection.dwell = Math.max(0, selection.dwell - .7);
+      }
+      selection.dwell = clamp(selection.dwell, 0, dwellNeed);
+      dwellText.textContent = `${Math.round((selection.dwell / dwellNeed) * 100)}%`;
+      if(selection.dwell >= dwellNeed && !selection.locked) evaluateChoice(selection.zone);
+      if(elapsed >= game.roundLimit && !game.answered) evaluateChoice('timeout');
     }
 
-    function spawnObstacle(){ game.obstacles.push({ lane: Math.floor(Math.random()*game.lanes), y:-40, size:34 }); }
-    function spawnStar(){ game.stars.push({ lane: Math.floor(Math.random()*game.lanes), y:-30, size:24 }); }
-    function resetGame(){
-      game.player.lane=1; game.player.dash=0; game.obstacles=[]; game.stars=[]; game.score=0; game.lives=3; game.moveCooldown=0;
-      scoreText.textContent='0'; livesText.textContent='3'; const diff=difficultySelect.value; game.speed = diff==='easy'?2.2:diff==='hard'?4.2:3.1;
-    }
-    function laneX(lane){ const laneWidth = game.w / game.lanes; return laneWidth*lane + laneWidth/2; }
-    function drawStar(ctx,x,y,radius,points,inset){ ctx.beginPath(); ctx.save(); ctx.translate(x,y); ctx.moveTo(0,0-radius); for(let i=0;i<points;i++){ ctx.rotate(Math.PI/points); ctx.lineTo(0,0-(radius*inset)); ctx.rotate(Math.PI/points); ctx.lineTo(0,0-radius);} ctx.restore(); ctx.closePath(); ctx.fill(); }
-
-    function gameLoop(){
-      const w=game.w,h=game.h; gameCtx.clearRect(0,0,w,h); gameCtx.fillStyle='#0c1730'; gameCtx.fillRect(0,0,w,h);
-      for(let i=1;i<game.lanes;i++){ gameCtx.strokeStyle='rgba(255,255,255,.12)'; gameCtx.setLineDash([10,10]); gameCtx.beginPath(); gameCtx.moveTo((w/game.lanes)*i,0); gameCtx.lineTo((w/game.lanes)*i,h); gameCtx.stroke(); } gameCtx.setLineDash([]);
-      if(Math.random()<0.028) spawnObstacle(); if(Math.random()<0.015) spawnStar();
-      const playerX=laneX(game.player.lane); const playerY=game.player.y-(game.player.dash>0?18:0); if(game.player.dash>0) game.player.dash--; if(game.moveCooldown>0) game.moveCooldown--;
-      game.obstacles.forEach(o=>o.y+=game.speed+1.5); game.stars.forEach(s=>s.y+=game.speed+1.2);
-      game.obstacles = game.obstacles.filter(o=>o.y<h+60); game.stars = game.stars.filter(s=>s.y<h+60);
-      for(const o of game.obstacles){ const ox=laneX(o.lane); if(Math.abs(ox-playerX)<26 && Math.abs(o.y-playerY)<28){ game.lives-=1; livesText.textContent=String(game.lives); o.y=h+100; if(game.lives<=0){ gameStarted=false; statusText.textContent='Game over'; startBtn.textContent='Reiniciar jogo'; } } }
-      for(const s of game.stars){ const sx=laneX(s.lane); if(Math.abs(sx-playerX)<24 && Math.abs(s.y-playerY)<26){ game.score+=10; scoreText.textContent=String(game.score); s.y=h+100; } }
-      gameCtx.fillStyle='#ff5d73'; for(const o of game.obstacles){ const ox=laneX(o.lane); gameCtx.fillRect(ox-17,o.y-17,34,34); }
-      gameCtx.fillStyle='#fbbf24'; for(const s of game.stars){ const sx=laneX(s.lane); drawStar(gameCtx,sx,s.y,12,5,.5); }
-      gameCtx.fillStyle='#22d3ee'; gameCtx.beginPath(); gameCtx.arc(playerX,playerY,18,0,Math.PI*2); gameCtx.fill(); gameCtx.fillStyle='#fff'; gameCtx.font='bold 18px Arial'; gameCtx.fillText('👁️',playerX-11,playerY+6);
-      if(gameStarted) gameLoopId=requestAnimationFrame(gameLoop);
-    }
+    function gameLoop(){ if(!game.started) return; drawGame(); gameRaf = requestAnimationFrame(gameLoop); }
+    function roundRect(ctx, x, y, w, h, r, fill, stroke){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); if(fill) ctx.fill(); if(stroke) ctx.stroke(); }
 
     async function renderFaceLoop(){
-      if(video.readyState>=2 && faceLandmarker){
+      if(video.readyState >= 2 && faceLandmarker){
         const nowMs = performance.now();
-        if(lastVideoTime!==video.currentTime){
+        if(lastVideoTime !== video.currentTime){
           lastVideoTime = video.currentTime;
           const results = faceLandmarker.detectForVideo(video, nowMs);
-          drawFace(results); analyzeFace(results);
+          drawFaceGuide(results); analyzeFace(results);
         }
       }
       rafId = requestAnimationFrame(renderFaceLoop);
     }
 
-    function toggleGame(){
-      if(!video.srcObject){ observationText.textContent='Ligue a câmera antes de iniciar.'; return; }
-      if(!calibration.values){ observationText.textContent='Faça a calibração antes de iniciar para melhor precisão.'; return; }
-      if(!gameStarted){ resetGame(); gameStarted=true; startBtn.textContent='Encerrar jogo'; statusText.textContent='Jogando'; gameLoop(); }
-      else { gameStarted=false; cancelAnimationFrame(gameLoopId); startBtn.textContent='Iniciar jogo'; statusText.textContent='Parado'; }
-    }
-
-    function saveSnapshot(){
-      const temp=document.createElement('canvas'); temp.width=gameCanvas.width; temp.height=gameCanvas.height; const tctx=temp.getContext('2d'); tctx.drawImage(gameCanvas,0,0,temp.width,temp.height);
-      const link=document.createElement('a'); link.download=`eye-runner-precision-${Date.now()}.png`; link.href=temp.toDataURL('image/png'); link.click();
-    }
+    function saveSnapshot(){ const link = document.createElement('a'); link.download = `eye-focus-doors-${Date.now()}.png`; link.href = gameCanvas.toDataURL('image/png'); link.click(); }
 
     cameraBtn.addEventListener('click', startCamera);
-    startBtn.addEventListener('click', toggleGame);
     calibrateBtn.addEventListener('click', beginCalibration);
+    startBtn.addEventListener('click', startGame);
     snapshotBtn.addEventListener('click', saveSnapshot);
     window.addEventListener('resize', resizeCanvases);
     resizeCanvases(); renderFaceLoop();
