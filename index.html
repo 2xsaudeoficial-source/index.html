@@ -19,6 +19,13 @@
     .stage-wrap{padding:16px}.camera{position:relative;height:320px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:#02070f;margin-bottom:14px}
     #video,#faceCanvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#video{transform:scaleX(-1)}#faceCanvas{pointer-events:none}
     .camera-badge{position:absolute;left:14px;top:14px;z-index:3;background:rgba(3,8,18,.76);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:.86rem;max-width:88%}
+    .camera-guide{position:absolute;inset:0;pointer-events:none;z-index:2}
+    .guide-frame{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42%;height:62%;border:2px dashed rgba(255,255,255,.34);border-radius:26px;box-shadow:0 0 0 9999px rgba(0,0,0,.05) inset}
+    .guide-frame.good{border-color:rgba(34,197,94,.8);box-shadow:0 0 0 2px rgba(34,197,94,.18),0 0 0 9999px rgba(0,0,0,.03) inset}
+    .guide-frame.warn{border-color:rgba(245,158,11,.85)}
+    .guide-frame.bad{border-color:rgba(244,63,94,.85)}
+    .guide-center-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.7);box-shadow:0 0 0 8px rgba(255,255,255,.08)}
+    .guide-hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:8px 12px;border-radius:12px;background:rgba(3,8,18,.72);border:1px solid var(--line);font-size:.84rem;color:var(--muted);white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
     .game{position:relative;height:380px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#0b1730,#09111f 70%,#07101b 100%)}
     .hud{position:absolute;left:12px;right:12px;top:12px;z-index:4;display:flex;justify-content:space-between;gap:10px;align-items:center}.hudbox{padding:10px 12px;background:rgba(3,8,18,.7);border:1px solid var(--line);border-radius:14px;font-size:.9rem}
     #gameCanvas{position:absolute;inset:0;width:100%;height:100%}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
@@ -51,6 +58,11 @@
         <div class="camera">
           <video id="video" autoplay playsinline muted></video>
           <canvas id="faceCanvas"></canvas>
+          <div class="camera-guide">
+            <div class="guide-frame warn" id="guideFrame"></div>
+            <div class="guide-center-dot"></div>
+            <div class="guide-hint" id="guideHint">Posicione o rosto dentro da moldura.</div>
+          </div>
           <div class="camera-badge" id="cameraBadge">Ligue a câmera e faça a calibração.</div>
         </div>
         <div class="game">
@@ -141,6 +153,8 @@
     const stepCenter = document.getElementById('stepCenter');
     const stepLeft = document.getElementById('stepLeft');
     const stepRight = document.getElementById('stepRight');
+    const guideFrame = document.getElementById('guideFrame');
+    const guideHint = document.getElementById('guideHint');
 
     let faceLandmarker, drawingUtils, stream, rafId, gameLoopId;
     let lastVideoTime = -1, ready = false, gameStarted = false, blinkCooldown = 0;
@@ -153,10 +167,15 @@
 
     function resizeCanvases(){
       const rect = faceCanvas.getBoundingClientRect();
-      faceCanvas.width = rect.width * devicePixelRatio; faceCanvas.height = rect.height * devicePixelRatio; faceCtx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+      faceCanvas.width = rect.width;
+      faceCanvas.height = rect.height;
+
       const grect = gameCanvas.getBoundingClientRect();
-      gameCanvas.width = grect.width * devicePixelRatio; gameCanvas.height = grect.height * devicePixelRatio; gameCtx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
-      game.w = grect.width; game.h = grect.height; game.player.y = game.h - 70;
+      gameCanvas.width = grect.width;
+      gameCanvas.height = grect.height;
+      game.w = grect.width;
+      game.h = grect.height;
+      game.player.y = game.h - 70;
     }
 
     async function setupFace(){
@@ -248,21 +267,63 @@
     }
 
     function drawFace(results){
-      const w = faceCanvas.clientWidth, h = faceCanvas.clientHeight; faceCtx.clearRect(0,0,w,h); faceCtx.save(); faceCtx.translate(w,0); faceCtx.scale(-1,1);
-      if(results.faceLandmarks?.length){
-        const lm = results.faceLandmarks[0];
-        drawingUtils.drawConnectors(lm, FaceLandmarker.FACE_LANDMARKS_TESSELATION, { color:'rgba(96,165,250,.18)', lineWidth:1 });
-        drawingUtils.drawLandmarks([lm[1], lm[33], lm[263], lm[468], lm[473]], { color:'#fff', fillColor:'#22d3ee', radius:3 });
+      const w = faceCanvas.width, h = faceCanvas.height;
+      faceCtx.clearRect(0,0,w,h);
+      if(!results.faceLandmarks?.length) return;
+
+      const lm = results.faceLandmarks[0];
+      const videoW = video.videoWidth || w;
+      const videoH = video.videoHeight || h;
+      const scale = Math.max(w / videoW, h / videoH);
+      const drawnW = videoW * scale;
+      const drawnH = videoH * scale;
+      const offsetX = (w - drawnW) / 2;
+      const offsetY = (h - drawnH) / 2;
+
+      faceCtx.save();
+      faceCtx.translate(w, 0);
+      faceCtx.scale(-1, 1);
+
+      const project = (p) => ({
+        x: offsetX + (p.x * videoW) * scale,
+        y: offsetY + (p.y * videoH) * scale
+      });
+
+      faceCtx.strokeStyle = 'rgba(96,165,250,.22)';
+      faceCtx.lineWidth = 1;
+      for (const pair of FaceLandmarker.FACE_LANDMARKS_TESSELATION) {
+        const p1 = project(lm[pair.start]);
+        const p2 = project(lm[pair.end]);
+        faceCtx.beginPath();
+        faceCtx.moveTo(p1.x, p1.y);
+        faceCtx.lineTo(p2.x, p2.y);
+        faceCtx.stroke();
       }
+
+      [1, 33, 263, 468, 473].forEach((idx) => {
+        const p = project(lm[idx]);
+        faceCtx.fillStyle = '#22d3ee';
+        faceCtx.beginPath();
+        faceCtx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        faceCtx.fill();
+        faceCtx.strokeStyle = '#ffffff';
+        faceCtx.lineWidth = 1;
+        faceCtx.stroke();
+      });
+
       faceCtx.restore();
     }
 
     function analyzeFace(results){
       if(!results.faceLandmarks?.length){
-        directionText.textContent='Sem rosto'; confidenceText.textContent='0%'; observationText.textContent='Rosto não detectado.'; return;
+        directionText.textContent='Sem rosto'; confidenceText.textContent='0%'; observationText.textContent='Rosto não detectado.';
+        guideFrame.className = 'guide-frame bad';
+        guideHint.textContent = 'Aproxime ou centralize o rosto na moldura.';
+        return;
       }
       const lm = results.faceLandmarks[0];
       const nose = lm[1], leftIris = lm[468], rightIris = lm[473];
+      const leftCheek = lm[234], rightCheek = lm[454], chin = lm[152], forehead = lm[10];
       const leftEyePts = [lm[33], lm[160], lm[158], lm[133], lm[153], lm[144]];
       const rightEyePts = [lm[362], lm[385], lm[387], lm[263], lm[373], lm[380]];
       const leftEAR = eyeAspect(leftEyePts), rightEAR = eyeAspect(rightEyePts), avgEAR=(leftEAR+rightEAR)/2;
@@ -270,10 +331,45 @@
       leftEyeText.textContent = smooth.leftEAR.toFixed(2); rightEyeText.textContent = smooth.rightEAR.toFixed(2);
 
       const conf = 0.92; smooth.conf = lerp(smooth.conf, conf, 0.15); confidenceText.textContent = `${Math.round(smooth.conf*100)}%`;
+      const faceCenterX = (leftCheek.x + rightCheek.x) / 2;
+      const faceCenterY = (forehead.y + chin.y) / 2;
+      const faceWidth = Math.abs(rightCheek.x - leftCheek.x);
+      const faceHeight = Math.abs(chin.y - forehead.y);
+      const centeredX = Math.abs(faceCenterX - 0.5);
+      const centeredY = Math.abs(faceCenterY - 0.5);
+      const sizeOk = faceWidth > 0.18 && faceWidth < 0.42 && faceHeight > 0.26 && faceHeight < 0.72;
+      const centeredOk = centeredX < 0.08 && centeredY < 0.1;
+      const framingGood = sizeOk && centeredOk;
+      if(framingGood){
+        guideFrame.className = 'guide-frame good';
+        guideHint.textContent = 'Enquadramento ideal.';
+      } else if(faceWidth < 0.18 || faceHeight < 0.26){
+        guideFrame.className = 'guide-frame warn';
+        guideHint.textContent = 'Aproxime o rosto da câmera.';
+      } else if(faceWidth > 0.42 || faceHeight > 0.72){
+        guideFrame.className = 'guide-frame warn';
+        guideHint.textContent = 'Afaste um pouco o rosto.';
+      } else if(faceCenterX < 0.42){
+        guideFrame.className = 'guide-frame warn';
+        guideHint.textContent = 'Mova o rosto para a direita da tela.';
+      } else if(faceCenterX > 0.58){
+        guideFrame.className = 'guide-frame warn';
+        guideHint.textContent = 'Mova o rosto para a esquerda da tela.';
+      } else if(faceCenterY < 0.4){
+        guideFrame.className = 'guide-frame warn';
+        guideHint.textContent = 'Abaixe um pouco o rosto.';
+      } else if(faceCenterY > 0.6){
+        guideFrame.className = 'guide-frame warn';
+        guideHint.textContent = 'Levante um pouco o rosto.';
+      } else {
+        guideFrame.className = 'guide-frame warn';
+        guideHint.textContent = 'Ajuste o enquadramento do rosto.';
+      }
+
       const headRaw = nose.x - 0.5;
       const eyeRaw = ((leftIris.x - nose.x) + (rightIris.x - nose.x)) / 2;
-      const metrics = { headRaw, eyeRaw, conf: smooth.conf };
-      collectCalibrationSample(metrics);
+      const metrics = { headRaw, eyeRaw, conf: smooth.conf, framingGood };
+      if(metrics.framingGood) collectCalibrationSample(metrics);
 
       let headNorm = headRaw * 6.5, eyeNorm = eyeRaw * 25;
       if(calibration.values){
@@ -304,13 +400,15 @@
       else blinkState.textContent = blinkCooldown>10 ? 'Sim' : 'Não';
       if(blinkCooldown>0) blinkCooldown--;
 
-      if(gameStarted && game.moveCooldown<=0 && calibration.values && smooth.conf >= 0.8){
+      if(gameStarted && game.moveCooldown<=0 && calibration.values && smooth.conf >= 0.8 && metrics.framingGood){
         if(dirText==='Esquerda'){ game.player.lane = Math.max(0, game.player.lane - 1); game.moveCooldown = 8; }
         if(dirText==='Direita'){ game.player.lane = Math.min(game.lanes - 1, game.player.lane + 1); game.moveCooldown = 8; }
       }
 
-      if(!calibration.values) observationText.textContent = 'Faça a calibração para aumentar a precisão do controle.';
-      else if(dirText==='Centro') observationText.textContent = 'Rastreamento estável e calibrado.';
+      if(!metrics.framingGood) {
+        observationText.textContent = `Enquadramento fora da zona ideal. ${guideHint.textContent}`;
+      } else if(!calibration.values) observationText.textContent = 'Faça a calibração para aumentar a precisão do controle.';
+      else if(dirText==='Centro') observationText.textContent = 'Rastreamento estável, calibrado e bem centralizado.';
       else observationText.textContent = `Comando ${dirText.toLowerCase()} detectado com filtro temporal ativo.`;
     }
 
