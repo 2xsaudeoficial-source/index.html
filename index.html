@@ -1,362 +1,1054 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Eye Focus Doors</title>
+  <title>EquiThera - Avaliação Terapêutica de Equilíbrio</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root{--bg:#07111f;--panel:rgba(10,19,36,.94);--line:rgba(255,255,255,.08);--text:#eef4ff;--muted:#98a9c8;--primary:#4f8cff;--cyan:#22d3ee;--good:#22c55e;--warn:#f59e0b;--bad:#f43f5e}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:radial-gradient(circle at top left, rgba(79,140,255,.22), transparent 28%),radial-gradient(circle at top right, rgba(34,211,238,.18), transparent 24%),linear-gradient(180deg,#08111f,#050b14 100%);min-height:100vh}
-    .app{max-width:1320px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1.12fr .88fr;gap:16px}
-    .panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 18px 48px rgba(0,0,0,.28);backdrop-filter:blur(12px)}
-    .hero{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
-    .hero h1{margin:0;font-size:1.35rem}.hero p{margin:4px 0 0;color:var(--muted);font-size:.92rem}.pillbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.pill{padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);min-width:110px}.pill span{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.pill strong{font-size:1rem}
-    .stage-wrap{padding:16px}.camera{position:relative;height:280px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:#02070f;margin-bottom:14px}.game{position:relative;height:420px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#0b1730,#09111f 70%,#07101b 100%)}
-    #video,#faceCanvas,#gameCanvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover} #video{transform:scaleX(-1)} #faceCanvas{pointer-events:none} #gameCanvas{object-fit:fill}
-    .camera-badge{position:absolute;left:14px;top:14px;z-index:3;background:rgba(3,8,18,.76);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:.86rem;max-width:88%}
-    .camera-guide{position:absolute;inset:0;pointer-events:none;z-index:2}.guide-frame{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42%;height:62%;border:2px dashed rgba(255,255,255,.34);border-radius:26px}.guide-frame.good{border-color:rgba(34,197,94,.8)}.guide-frame.warn{border-color:rgba(245,158,11,.85)}.guide-frame.bad{border-color:rgba(244,63,94,.85)}.guide-hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:8px 12px;border-radius:12px;background:rgba(3,8,18,.72);border:1px solid var(--line);font-size:.84rem;color:var(--muted);white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
-    .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px} button,select{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--line);font-weight:700;background:rgba(255,255,255,.05);color:var(--text)} button{cursor:pointer;background:linear-gradient(135deg,var(--primary),#7ca8ff);border:0}button.secondary{background:rgba(255,255,255,.05);border:1px solid var(--line)}
-    .side{padding:16px;display:grid;gap:14px}.card{padding:16px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid var(--line)}.card h3{margin:0 0 10px;font-size:1rem}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{padding:14px;border-radius:16px;background:rgba(7,11,22,.68);border:1px solid rgba(255,255,255,.05)}.metric small{display:block;color:var(--muted);margin-bottom:6px;text-transform:uppercase;font-size:.72rem;letter-spacing:.06em}.metric strong{font-size:1.35rem}.note{color:var(--muted);line-height:1.55;font-size:.92rem} ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.55}.calib-steps{display:grid;gap:8px}.step{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:.9rem}.step.active{border-color:rgba(79,140,255,.7);background:rgba(79,140,255,.12)}.step.done{border-color:rgba(34,197,94,.6);background:rgba(34,197,94,.12)}
-    @media (max-width:980px){.app{grid-template-columns:1fr}.camera{height:240px}.game{height:360px}} @media (max-width:640px){.hero{flex-direction:column;align-items:flex-start}.controls,.grid{grid-template-columns:1fr}.camera{height:210px}.game{height:320px}}
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --panel-2: #f8fbff;
+      --text: #162033;
+      --muted: #6b7890;
+      --border: #dde6f3;
+      --shadow: 0 18px 50px rgba(17, 35, 68, 0.08);
+      --radius: 22px;
+      --accent: #355cff;
+      --accent-soft: rgba(53, 92, 255, 0.12);
+      --success: #11a36a;
+      --warning: #f39c12;
+      --danger: #d94d4d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, #f4f7fb 40%, #eef4ff 100%);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 22px;
+      padding: 26px 28px;
+      background: linear-gradient(135deg, #15213b 0%, #1d3366 100%);
+      color: white;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 2.6vw, 2.7rem);
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,0.82);
+      max-width: 760px;
+    }
+
+    .hero-badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 18px;
+      padding: 14px 16px;
+      min-width: 210px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-badge strong {
+      display: block;
+      font-size: 1.5rem;
+      margin-top: 4px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+    }
+
+    .column {
+      display: grid;
+      gap: 22px;
+      align-content: start;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 22px 14px;
+    }
+
+    .card-title h2, .card-title h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .card-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .card-body {
+      padding: 0 22px 22px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 7px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 0.98rem;
+      background: white;
+      color: var(--text);
+      outline: none;
+      transition: 0.18s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      background: linear-gradient(180deg, #ffffff 0%, #f6f9ff 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .metric strong {
+      font-size: 2rem;
+      line-height: 1;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .metric small {
+      color: var(--muted);
+    }
+
+    .camera-shell {
+      position: relative;
+      background: #0f1728;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      aspect-ratio: 16 / 10;
+      min-height: 380px;
+    }
+
+    video, canvas.overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camera-hud {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .hud-pill {
+      background: rgba(9, 15, 29, 0.72);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 12px 14px;
+      backdrop-filter: blur(8px);
+      font-size: 0.92rem;
+    }
+
+    .hud-pill strong { display: block; margin-top: 4px; font-size: 1rem; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 10px 22px rgba(53, 92, 255, 0.22);
+    }
+
+    .secondary {
+      background: #eef3ff;
+      color: #2343cb;
+    }
+
+    .ghost {
+      background: #f6f8fc;
+      color: #33415e;
+      border: 1px solid var(--border);
+    }
+
+    .score-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .score-row {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .score-row-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .score-row-title {
+      font-weight: 700;
+      font-size: 0.97rem;
+    }
+
+    .score-row small {
+      color: var(--muted);
+      display: block;
+      margin-top: 4px;
+    }
+
+    .range-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
+    .range-value {
+      min-width: 42px;
+      text-align: center;
+      padding: 9px 10px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-weight: 800;
+    }
+
+    .summary-box {
+      border: 1px dashed #bed0ef;
+      background: linear-gradient(180deg, #f8fbff 0%, #f0f5ff 100%);
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .summary-box h4 {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+    }
+
+    .chart-shell {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      height: 320px;
+    }
+
+    .legend-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .session-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .session-item {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      background: white;
+    }
+
+    .session-item strong {
+      display: block;
+      font-size: 0.98rem;
+      margin-bottom: 5px;
+    }
+
+    .session-item span, .session-item small {
+      color: var(--muted);
+      display: block;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      background: #edf2ff;
+      color: #2748cc;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 1120px) {
+      .layout { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .camera-hud { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .app { padding: 14px; }
+      .hero { flex-direction: column; align-items: flex-start; }
+      .grid-2, .grid-3, .metrics { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <section class="panel">
-      <div class="hero">
-        <div>
-          <h1>Eye Focus Doors</h1>
-          <p>Jogo de seleção por olhar fixo. Muito mais preciso no celular do que movimento contínuo.</p>
-        </div>
-        <div class="pillbar">
-          <div class="pill"><span>Status</span><strong id="statusText">Pronto</strong></div>
-          <div class="pill"><span>Pontos</span><strong id="scoreText">0</strong></div>
-          <div class="pill"><span>Erros</span><strong id="mistakesText">0</strong></div>
-          <div class="pill"><span>Olhar</span><strong id="directionText">Centro</strong></div>
-        </div>
+    <section class="hero">
+      <div>
+        <h1>EquiThera</h1>
+        <p>
+          Ferramenta terapêutica para avaliação de equilíbrio com webcam, escalas funcionais,
+          pontuação clínica, histórico de sessões e exportação de gráfico em imagem.
+        </p>
       </div>
-      <div class="stage-wrap">
-        <div class="camera">
-          <video id="video" autoplay playsinline muted></video>
-          <canvas id="faceCanvas"></canvas>
-          <div class="camera-guide">
-            <div class="guide-frame warn" id="guideFrame"></div>
-            <div class="guide-hint" id="guideHint">Posicione o rosto dentro da moldura.</div>
-          </div>
-          <div class="camera-badge" id="cameraBadge">Ligue a câmera e faça a calibração.</div>
-        </div>
-        <div class="game">
-          <canvas id="gameCanvas"></canvas>
-        </div>
-        <div class="controls">
-          <select id="difficultySelect">
-            <option value="easy">Fácil</option>
-            <option value="normal" selected>Normal</option>
-            <option value="hard">Difícil</option>
-          </select>
-          <select id="controlSelect">
-            <option value="head">Cabeça</option>
-            <option value="eyes">Olhos</option>
-            <option value="hybrid" selected>Híbrido preciso</option>
-          </select>
-          <button id="cameraBtn">Ligar câmera</button>
-          <button id="startBtn">Iniciar jogo</button>
-          <button id="calibrateBtn" class="secondary">Iniciar calibração</button>
-          <button id="snapshotBtn" class="secondary">Salvar imagem</button>
-        </div>
+      <div class="hero-badge">
+        <span>Índice terapêutico atual</span>
+        <strong id="heroScore">0 / 100</strong>
+        <span id="heroStatus">Aguardando avaliação</span>
       </div>
-    </section><aside class="panel side">
-  <div class="card">
-    <h3>Métricas do rastreio</h3>
-    <div class="grid">
-      <div class="metric"><small>Confiança</small><strong id="confidenceText">0%</strong></div>
-      <div class="metric"><small>Sinal final</small><strong id="signalText">0.00</strong></div>
-      <div class="metric"><small>Progresso olhar</small><strong id="dwellText">0%</strong></div>
-      <div class="metric"><small>Zona alvo</small><strong id="targetText">-</strong></div>
-    </div>
-  </div>
-  <div class="card">
-    <h3>Calibração</h3>
-    <div class="calib-steps">
-      <div class="step" id="stepCenter">1. Olhe para o centro</div>
-      <div class="step" id="stepLeft">2. Olhe para a esquerda</div>
-      <div class="step" id="stepRight">3. Olhe para a direita</div>
-    </div>
-  </div>
-  <div class="card">
-    <h3>Observações</h3>
-    <div class="note" id="observationText">Esse jogo usa olhar fixo em zonas discretas. É mais robusto no celular.</div>
-  </div>
-  <div class="card">
-    <h3>Como jogar</h3>
-    <ul>
-      <li>Veja em qual porta aparece a estrela.</li>
-      <li>Olhe para a porta correta e mantenha o olhar por um instante.</li>
-      <li>Quando a barra completar, a escolha é feita.</li>
-      <li>Você ganha precisão porque não precisa arrastar personagem.</li>
-    </ul>
-  </div>
-</aside>
+    </section>
 
-  </div>  <script type="module">
-    import { FaceLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs';
+    <div class="layout">
+      <div class="column">
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Dados do paciente e da sessão</h2>
+              <p>Preencha os campos principais para gerar o painel clínico e o histórico.</p>
+            </div>
+            <span class="pill">Uso terapêutico</span>
+          </div>
+          <div class="card-body">
+            <div class="grid-3">
+              <div>
+                <label for="patientName">Nome do paciente</label>
+                <input id="patientName" type="text" placeholder="Ex.: Maria Oliveira" />
+              </div>
+              <div>
+                <label for="sessionDate">Data da sessão</label>
+                <input id="sessionDate" type="date" />
+              </div>
+              <div>
+                <label for="therapistName">Profissional</label>
+                <input id="therapistName" type="text" placeholder="Ex.: Dra. Ana Souza" />
+              </div>
+            </div>
+            <div class="grid-2" style="margin-top:14px;">
+              <div>
+                <label for="exerciseType">Protocolo / exercício</label>
+                <select id="exerciseType">
+                  <option value="Apoio bipodal">Apoio bipodal</option>
+                  <option value="Apoio unipodal">Apoio unipodal</option>
+                  <option value="Transferência lateral">Transferência lateral</option>
+                  <option value="Alcance funcional">Alcance funcional</option>
+                  <option value="Treino misto">Treino misto</option>
+                </select>
+              </div>
+              <div>
+                <label for="clinicalLevel">Classificação clínica</label>
+                <select id="clinicalLevel">
+                  <option value="Baixo risco">Baixo risco</option>
+                  <option value="Risco moderado">Risco moderado</option>
+                  <option value="Alto risco">Alto risco</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Captação da câmera</h2>
+              <p>
+                Área para calibração visual. Neste MVP, a câmera serve como suporte terapêutico e visual.
+              </p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="camera-shell">
+              <video id="video" autoplay playsinline muted></video>
+              <canvas id="overlay" class="overlay"></canvas>
+              <div class="camera-hud">
+                <div class="hud-pill">Estabilidade simulada<strong id="hudStability">0%</strong></div>
+                <div class="hud-pill">Tempo sustentado<strong id="hudHold">0 s</strong></div>
+                <div class="hud-pill">Status da sessão<strong id="hudMode">Parado</strong></div>
+              </div>
+            </div>
+            <div class="toolbar">
+              <button class="primary" id="startCameraBtn">Iniciar câmera</button>
+              <button class="secondary" id="simulateBtn">Simular sessão</button>
+              <button class="ghost" id="stopBtn">Parar</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Resumo automático</h2>
+              <p>Indicadores calculados a partir dos critérios preenchidos e da sessão.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="metrics">
+              <div class="metric">
+                <span>Score final</span>
+                <strong id="finalScore">0</strong>
+                <small>Escala de 0 a 100</small>
+              </div>
+              <div class="metric">
+                <span>Nível funcional</span>
+                <strong id="functionalLevel">—</strong>
+                <small>Classificação automática</small>
+              </div>
+              <div class="metric">
+                <span>Risco estimado</span>
+                <strong id="riskLevel">—</strong>
+                <small>Baseado na pontuação</small>
+              </div>
+              <div class="metric">
+                <span>Evolução</span>
+                <strong id="trendLabel">—</strong>
+                <small>Comparada à sessão anterior</small>
+              </div>
+            </div>
+            <div class="summary-box">
+              <h4>Parecer resumido</h4>
+              <div id="summaryText">
+                Preencha as escalas e salve a sessão para gerar um parecer clínico resumido.
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="column">
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Escalas e pontuação</h2>
+              <p>Ajuste os critérios da avaliação terapêutica para compor o score final.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="score-list" id="scoreList"></div>
+            <div class="toolbar">
+              <button class="primary" id="saveSessionBtn">Salvar sessão</button>
+              <button class="ghost" id="resetBtn">Resetar avaliação</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Gráfico de desempenho</h2>
+              <p>Visual elegante para acompanhamento clínico e exportação em imagem.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-shell">
+              <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="legend-note">
+              O gráfico mostra a evolução do score final por sessão. Use a exportação para relatórios e prontuários.
+            </div>
+            <div class="toolbar">
+              <button class="secondary" id="exportChartBtn">Exportar gráfico PNG</button>
+              <button class="ghost" id="loadDemoBtn">Carregar dados de demonstração</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Observações clínicas</h2>
+              <p>Campo livre para registrar compensações, fadiga, dor, assimetria e comentários.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <label for="notes">Notas da sessão</label>
+            <textarea id="notes" placeholder="Ex.: paciente apresentou instabilidade leve à esquerda, melhora no tempo sustentado e menor uso de compensação de tronco."></textarea>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <h2>Histórico recente</h2>
+              <p>Sessões registradas localmente no navegador.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="session-list" id="sessionList"></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      MVP clínico front-end. Para produção real, adicione autenticação, prontuário, consentimento e armazenamento seguro.
+    </div>
+  </div>
+
+  <script>
+    const criteria = [
+      { key: 'staticBalance', label: 'Equilíbrio estático', hint: 'Capacidade de manter postura estável sem oscilações importantes.', weight: 20, value: 5 },
+      { key: 'dynamicBalance', label: 'Equilíbrio dinâmico', hint: 'Controle durante deslocamentos e ajustes posturais.', weight: 20, value: 5 },
+      { key: 'posturalControl', label: 'Controle postural', hint: 'Alinhamento corporal e organização motora global.', weight: 20, value: 5 },
+      { key: 'movementPrecision', label: 'Precisão do movimento', hint: 'Qualidade do gesto, direção e consistência.', weight: 15, value: 5 },
+      { key: 'timeSupport', label: 'Tempo sustentado', hint: 'Capacidade de manter a tarefa pelo tempo proposto.', weight: 15, value: 5 },
+      { key: 'confidenceFunction', label: 'Confiança funcional', hint: 'Segurança percebida durante a execução.', weight: 10, value: 5 },
+    ];
+
+    const scoreList = document.getElementById('scoreList');
+    const finalScoreEl = document.getElementById('finalScore');
+    const heroScore = document.getElementById('heroScore');
+    const heroStatus = document.getElementById('heroStatus');
+    const functionalLevelEl = document.getElementById('functionalLevel');
+    const riskLevelEl = document.getElementById('riskLevel');
+    const trendLabelEl = document.getElementById('trendLabel');
+    const summaryTextEl = document.getElementById('summaryText');
+    const sessionListEl = document.getElementById('sessionList');
+    const sessionDateEl = document.getElementById('sessionDate');
+    const notesEl = document.getElementById('notes');
 
     const video = document.getElementById('video');
-    const faceCanvas = document.getElementById('faceCanvas');
-    const faceCtx = faceCanvas.getContext('2d');
-    const gameCanvas = document.getElementById('gameCanvas');
-    const gameCtx = gameCanvas.getContext('2d');
+    const overlay = document.getElementById('overlay');
+    const ctx = overlay.getContext('2d');
+    const hudStability = document.getElementById('hudStability');
+    const hudHold = document.getElementById('hudHold');
+    const hudMode = document.getElementById('hudMode');
 
-    const statusText = document.getElementById('statusText');
-    const scoreText = document.getElementById('scoreText');
-    const mistakesText = document.getElementById('mistakesText');
-    const directionText = document.getElementById('directionText');
-    const confidenceText = document.getElementById('confidenceText');
-    const signalText = document.getElementById('signalText');
-    const dwellText = document.getElementById('dwellText');
-    const targetText = document.getElementById('targetText');
-    const observationText = document.getElementById('observationText');
-    const cameraBadge = document.getElementById('cameraBadge');
-    const guideFrame = document.getElementById('guideFrame');
-    const guideHint = document.getElementById('guideHint');
+    let cameraStream = null;
+    let chart = null;
+    let animationFrame = null;
+    let simulateInterval = null;
+    let holdSeconds = 0;
+    let simulatedStability = 0;
 
-    const difficultySelect = document.getElementById('difficultySelect');
-    const controlSelect = document.getElementById('controlSelect');
-    const cameraBtn = document.getElementById('cameraBtn');
-    const startBtn = document.getElementById('startBtn');
-    const calibrateBtn = document.getElementById('calibrateBtn');
-    const snapshotBtn = document.getElementById('snapshotBtn');
+    sessionDateEl.value = new Date().toISOString().slice(0, 10);
 
-    const stepCenter = document.getElementById('stepCenter');
-    const stepLeft = document.getElementById('stepLeft');
-    const stepRight = document.getElementById('stepRight');
-
-    let faceLandmarker, stream, rafId, gameRaf, lastVideoTime = -1;
-    let smooth = { head:0, eyes:0, final:0, conf:.9 };
-    let calibration = { active:false, stage:'idle', samples:{center:[],left:[],right:[]}, values:null };
-    let selection = { zone:'center', dwell:0, locked:false };
-
-    const game = {
-      w:0, h:0, started:false, score:0, mistakes:0, round:0,
-      promptZone:'center', answered:false, roundStart:0, roundLimit:5000, nextDelay:900
-    };
-
-    function resizeCanvases(){
-      const rect = faceCanvas.getBoundingClientRect();
-      faceCanvas.width = rect.width; faceCanvas.height = rect.height;
-      const grect = gameCanvas.getBoundingClientRect();
-      gameCanvas.width = grect.width; gameCanvas.height = grect.height; game.w = grect.width; game.h = grect.height;
-    }
-
-    async function setupFace(){
-      if(faceLandmarker) return;
-      statusText.textContent = 'Carregando IA';
-      const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm');
-      faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-        baseOptions: { modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task' },
-        runningMode:'VIDEO', numFaces:1,
-        minFaceDetectionConfidence:.7, minFacePresenceConfidence:.7, minTrackingConfidence:.7,
-        outputFaceBlendshapes:false, outputFacialTransformationMatrixes:false
+    function renderCriteria() {
+      scoreList.innerHTML = '';
+      criteria.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'score-row';
+        row.innerHTML = `
+          <div class="score-row-top">
+            <div>
+              <div class="score-row-title">${item.label}</div>
+              <small>${item.hint} • Peso ${item.weight}%</small>
+            </div>
+          </div>
+          <div class="range-wrap">
+            <input type="range" min="0" max="10" step="1" value="${item.value}" data-index="${index}" />
+            <div class="range-value" id="value-${item.key}">${item.value}</div>
+          </div>
+        `;
+        scoreList.appendChild(row);
       });
-      statusText.textContent = 'IA pronta';
+
+      scoreList.querySelectorAll('input[type="range"]').forEach(input => {
+        input.addEventListener('input', (event) => {
+          const index = Number(event.target.dataset.index);
+          criteria[index].value = Number(event.target.value);
+          document.getElementById(`value-${criteria[index].key}`).textContent = event.target.value;
+          updateComputedState();
+        });
+      });
     }
 
-    async function startCamera(){
-      try{
-        await setupFace();
-        stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user', width:{ideal:1280}, height:{ideal:720} }, audio:false });
-        video.srcObject = stream; await video.play(); resizeCanvases();
-        cameraBadge.textContent = 'Câmera ativa. Faça a calibração de 3 pontos.';
-        statusText.textContent = 'Câmera ativa';
-      }catch(e){ statusText.textContent='Erro câmera'; observationText.textContent='Não foi possível acessar a câmera.'; }
+    function calculateScore() {
+      const total = criteria.reduce((sum, item) => sum + ((item.value / 10) * item.weight), 0);
+      return Math.round(total);
     }
 
-    function lerp(a,b,t){ return a + (b-a)*t; }
-    function avg(arr){ return arr.length ? arr.reduce((s,v)=>s+v,0)/arr.length : 0; }
-    function clamp(v,min,max){ return Math.min(max, Math.max(min,v)); }
-    function dist(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
-    function eyeAspect(pts){ const [p1,p2,p3,p4,p5,p6]=pts; const vertical=dist(p2,p6)+dist(p3,p5); const horizontal=Math.max(dist(p1,p4),.0001); return vertical/(2*horizontal); }
-
-    function setStepState(active){
-      [stepCenter,stepLeft,stepRight].forEach(s=>s.className='step');
-      if(active==='center') stepCenter.className='step active';
-      if(active==='left') stepLeft.className='step active';
-      if(active==='right') stepRight.className='step active';
-      if(calibration.samples.center.length>=15) stepCenter.className='step done';
-      if(calibration.samples.left.length>=15) stepLeft.className='step done';
-      if(calibration.samples.right.length>=15) stepRight.className='step done';
+    function classifyFunctionalLevel(score) {
+      if (score >= 85) return 'Excelente';
+      if (score >= 70) return 'Bom';
+      if (score >= 50) return 'Moderado';
+      return 'Baixo';
     }
 
-    function beginCalibration(){
-      if(!video.srcObject){ observationText.textContent='Ligue a câmera antes.'; return; }
-      calibration = { active:true, stage:'center', samples:{center:[],left:[],right:[]}, values:null };
-      setStepState('center');
-      cameraBadge.textContent = 'Calibração: olhe para o centro.';
-      observationText.textContent = 'Fase 1 de 3: olhando para o centro.';
+    function classifyRisk(score) {
+      if (score >= 80) return 'Baixo';
+      if (score >= 55) return 'Moderado';
+      return 'Elevado';
     }
 
-    function normalizeWithCalibration(raw, left, center, right){
-      if(raw < center){ const denom = Math.max(center-left, .0001); return -Math.min(1, (center-raw)/denom); }
-      const denom = Math.max(right-center, .0001); return Math.min(1, (raw-center)/denom);
+    function describeTrend(currentScore, previousScore) {
+      if (previousScore == null) return 'Sem base';
+      const diff = currentScore - previousScore;
+      if (diff > 4) return `Melhora +${diff}`;
+      if (diff < -4) return `Queda ${diff}`;
+      return 'Estável';
     }
 
-    function collectCalibrationSample(metrics){
-      if(!calibration.active || !metrics.framingGood || metrics.conf < .8) return;
-      const bucket = calibration.samples[calibration.stage];
-      bucket.push({ head:metrics.headRaw, eyes:metrics.eyeRaw });
-      if(bucket.length >= 15){
-        if(calibration.stage==='center'){ calibration.stage='left'; setStepState('left'); cameraBadge.textContent='Calibração: olhe para a esquerda.'; observationText.textContent='Fase 2 de 3: olhando para a esquerda.'; }
-        else if(calibration.stage==='left'){ calibration.stage='right'; setStepState('right'); cameraBadge.textContent='Calibração: olhe para a direita.'; observationText.textContent='Fase 3 de 3: olhando para a direita.'; }
-        else {
-          calibration.active=false; calibration.stage='done';
-          calibration.values = {
-            centerHead: avg(calibration.samples.center.map(s=>s.head)), leftHead: avg(calibration.samples.left.map(s=>s.head)), rightHead: avg(calibration.samples.right.map(s=>s.head)),
-            centerEyes: avg(calibration.samples.center.map(s=>s.eyes)), leftEyes: avg(calibration.samples.left.map(s=>s.eyes)), rightEyes: avg(calibration.samples.right.map(s=>s.eyes))
-          };
-          setStepState(null); cameraBadge.textContent='Calibração concluída.'; observationText.textContent='Calibração pronta. Agora o jogo usa zonas discretas mais precisas.'; statusText.textContent='Calibrado';
+    function buildSummary(score, level, risk) {
+      const exercise = document.getElementById('exerciseType').value;
+      const patient = document.getElementById('patientName').value.trim() || 'Paciente';
+      const weakest = [...criteria].sort((a, b) => a.value - b.value)[0];
+      const strongest = [...criteria].sort((a, b) => b.value - a.value)[0];
+
+      return `${patient} apresentou score global de ${score}/100 no protocolo ${exercise}, com desempenho funcional classificado como ${level.toLowerCase()} e risco ${risk.toLowerCase()} estimado para instabilidade. O melhor domínio foi ${strongest.label.toLowerCase()} e o ponto que merece mais atenção foi ${weakest.label.toLowerCase()}. Recomenda-se progressão terapêutica guiada com foco em controle postural, sustentação e refinamento funcional.`;
+    }
+
+    function getSessions() {
+      return JSON.parse(localStorage.getItem('equithera-sessions') || '[]');
+    }
+
+    function saveSessions(sessions) {
+      localStorage.setItem('equithera-sessions', JSON.stringify(sessions));
+    }
+
+    function updateComputedState() {
+      const sessions = getSessions();
+      const score = calculateScore();
+      const level = classifyFunctionalLevel(score);
+      const risk = classifyRisk(score);
+      const previousScore = sessions.length ? sessions[sessions.length - 1].score : null;
+      const trend = describeTrend(score, previousScore);
+
+      finalScoreEl.textContent = score;
+      heroScore.textContent = `${score} / 100`;
+      functionalLevelEl.textContent = level;
+      riskLevelEl.textContent = risk;
+      trendLabelEl.textContent = trend;
+      summaryTextEl.textContent = buildSummary(score, level, risk);
+
+      const statusText = risk === 'Baixo' ? 'Boa estabilidade geral' : risk === 'Moderado' ? 'Atenção moderada' : 'Necessita supervisão';
+      heroStatus.textContent = statusText;
+    }
+
+    function renderSessions() {
+      const sessions = getSessions();
+      sessionListEl.innerHTML = '';
+
+      if (!sessions.length) {
+        sessionListEl.innerHTML = '<div class="session-item"><strong>Nenhuma sessão salva</strong><span>Registre a primeira avaliação para ver a evolução.</span></div>';
+        return;
+      }
+
+      [...sessions].reverse().forEach((session) => {
+        const item = document.createElement('div');
+        item.className = 'session-item';
+        item.innerHTML = `
+          <strong>${session.patient || 'Paciente sem nome'} • ${session.score}/100</strong>
+          <span>${session.date} • ${session.exercise}</span>
+          <small>${session.level} • Risco ${session.risk}</small>
+        `;
+        sessionListEl.appendChild(item);
+      });
+    }
+
+    function buildChart() {
+      const canvas = document.getElementById('performanceChart');
+      const chartCtx = canvas.getContext('2d');
+
+      const gradient = chartCtx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, 'rgba(53, 92, 255, 0.32)');
+      gradient.addColorStop(1, 'rgba(53, 92, 255, 0.02)');
+
+      const sessions = getSessions();
+      const labels = sessions.map((s, i) => s.date || `Sessão ${i + 1}`);
+      const data = sessions.map(s => s.score);
+
+      if (chart) chart.destroy();
+
+      const backgroundPlugin = {
+        id: 'customCanvasBackgroundColor',
+        beforeDraw(chart, args, options) {
+          const {ctx} = chart;
+          ctx.save();
+          ctx.globalCompositeOperation = 'destination-over';
+          ctx.fillStyle = options.color || '#ffffff';
+          ctx.fillRect(0, 0, chart.width, chart.height);
+          ctx.restore();
         }
+      };
+
+      chart = new Chart(chartCtx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Score final',
+            data,
+            fill: true,
+            backgroundColor: gradient,
+            borderColor: '#355cff',
+            borderWidth: 3,
+            tension: 0.35,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBorderWidth: 2,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#355cff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 600 },
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                usePointStyle: true,
+                boxWidth: 10,
+                color: '#32415c',
+                font: { size: 12, weight: '600' }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(17, 28, 53, 0.94)',
+              titleColor: '#ffffff',
+              bodyColor: '#eaf0ff',
+              padding: 12,
+              displayColors: false,
+              callbacks: {
+                label: (context) => ` Score: ${context.raw}/100`
+              }
+            },
+            customCanvasBackgroundColor: { color: '#ffffff' }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: '#60708e' }
+            },
+            y: {
+              min: 0,
+              max: 100,
+              ticks: {
+                stepSize: 20,
+                color: '#60708e'
+              },
+              grid: {
+                color: 'rgba(143, 165, 204, 0.18)'
+              }
+            }
+          }
+        },
+        plugins: [backgroundPlugin]
+      });
+    }
+
+    function saveCurrentSession() {
+      const patient = document.getElementById('patientName').value.trim();
+      const therapist = document.getElementById('therapistName').value.trim();
+      const date = document.getElementById('sessionDate').value;
+      const exercise = document.getElementById('exerciseType').value;
+      const classification = document.getElementById('clinicalLevel').value;
+      const score = calculateScore();
+      const level = classifyFunctionalLevel(score);
+      const risk = classifyRisk(score);
+      const notes = notesEl.value.trim();
+
+      const session = {
+        id: Date.now(),
+        patient,
+        therapist,
+        date,
+        exercise,
+        classification,
+        score,
+        level,
+        risk,
+        notes,
+        criteria: criteria.map(c => ({ key: c.key, value: c.value }))
+      };
+
+      const sessions = getSessions();
+      sessions.push(session);
+      saveSessions(sessions);
+      updateComputedState();
+      renderSessions();
+      buildChart();
+    }
+
+    function resetEvaluation() {
+      criteria.forEach(item => item.value = 5);
+      renderCriteria();
+      notesEl.value = '';
+      simulatedStability = 0;
+      holdSeconds = 0;
+      hudStability.textContent = '0%';
+      hudHold.textContent = '0 s';
+      hudMode.textContent = 'Parado';
+      updateComputedState();
+      drawOverlayFrame();
+    }
+
+    async function startCamera() {
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+          audio: false
+        });
+        video.srcObject = cameraStream;
+        hudMode.textContent = 'Câmera ativa';
+        await video.play();
+        resizeOverlay();
+        drawOverlayLoop();
+      } catch (error) {
+        alert('Não foi possível acessar a câmera. Verifique a permissão do navegador e use HTTPS ou localhost.');
+        console.error(error);
       }
     }
 
-    function drawFaceGuide(results){
-      const w = faceCanvas.width, h = faceCanvas.height; faceCtx.clearRect(0,0,w,h);
-      if(!results.faceLandmarks?.length) return;
-      const lm = results.faceLandmarks[0];
-      const videoW = video.videoWidth || w, videoH = video.videoHeight || h;
-      const scale = Math.max(w/videoW, h/videoH); const drawnW = videoW*scale; const drawnH = videoH*scale; const offsetX = (w-drawnW)/2; const offsetY = (h-drawnH)/2;
-      faceCtx.save(); faceCtx.translate(w,0); faceCtx.scale(-1,1);
-      const dots = [1,33,263,468,473].map(i=>lm[i]);
-      dots.forEach(p=>{ const x=offsetX + (p.x*videoW)*scale; const y=offsetY + (p.y*videoH)*scale; faceCtx.fillStyle='#22d3ee'; faceCtx.beginPath(); faceCtx.arc(x,y,3,0,Math.PI*2); faceCtx.fill(); });
-      faceCtx.restore();
-    }
-
-    function analyzeFace(results){
-      if(!results.faceLandmarks?.length){ directionText.textContent='Sem rosto'; confidenceText.textContent='0%'; guideFrame.className='guide-frame bad'; guideHint.textContent='Aproxime ou centralize o rosto.'; return; }
-      const lm = results.faceLandmarks[0];
-      const nose = lm[1], leftIris = lm[468], rightIris = lm[473], leftCheek = lm[234], rightCheek = lm[454], chin = lm[152], forehead = lm[10];
-      const faceCenterX = (leftCheek.x + rightCheek.x)/2, faceCenterY = (forehead.y + chin.y)/2, faceWidth = Math.abs(rightCheek.x-leftCheek.x), faceHeight = Math.abs(chin.y-forehead.y);
-      const centeredX = Math.abs(faceCenterX-.5), centeredY = Math.abs(faceCenterY-.5), sizeOk = faceWidth>.18 && faceWidth<.42 && faceHeight>.26 && faceHeight<.72, centeredOk = centeredX<.08 && centeredY<.1, framingGood = sizeOk && centeredOk;
-      if(framingGood){ guideFrame.className='guide-frame good'; guideHint.textContent='Enquadramento ideal.'; }
-      else if(faceWidth<.18 || faceHeight<.26){ guideFrame.className='guide-frame warn'; guideHint.textContent='Aproxime o rosto.'; }
-      else if(faceWidth>.42 || faceHeight>.72){ guideFrame.className='guide-frame warn'; guideHint.textContent='Afaste o rosto.'; }
-      else if(faceCenterX<.42){ guideFrame.className='guide-frame warn'; guideHint.textContent='Mova para a direita da tela.'; }
-      else if(faceCenterX>.58){ guideFrame.className='guide-frame warn'; guideHint.textContent='Mova para a esquerda da tela.'; }
-      else { guideFrame.className='guide-frame warn'; guideHint.textContent='Ajuste o enquadramento.'; }
-
-      const leftEyePts = [lm[33], lm[160], lm[158], lm[133], lm[153], lm[144]];
-      const rightEyePts = [lm[362], lm[385], lm[387], lm[263], lm[373], lm[380]];
-      const ear = (eyeAspect(leftEyePts) + eyeAspect(rightEyePts)) / 2;
-
-      const conf = .92; smooth.conf = lerp(smooth.conf, conf, .15); confidenceText.textContent = `${Math.round(smooth.conf*100)}%`;
-      const headRaw = nose.x - .5;
-      const eyeRaw = ((leftIris.x - nose.x) + (rightIris.x - nose.x))/2;
-      const metrics = { headRaw, eyeRaw, conf:smooth.conf, framingGood };
-      collectCalibrationSample(metrics);
-
-      let headNorm = headRaw * 6.5, eyeNorm = eyeRaw * 25;
-      if(calibration.values){
-        headNorm = normalizeWithCalibration(headRaw, calibration.values.leftHead, calibration.values.centerHead, calibration.values.rightHead);
-        eyeNorm = normalizeWithCalibration(eyeRaw, calibration.values.leftEyes, calibration.values.centerEyes, calibration.values.rightEyes);
+    function stopAllMedia() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
       }
-      smooth.head = lerp(smooth.head, headNorm, .14); smooth.eyes = lerp(smooth.eyes, eyeNorm, .12);
-      let finalSignal = controlSelect.value==='head' ? smooth.head : controlSelect.value==='eyes' ? smooth.eyes : smooth.head * .65 + smooth.eyes * .35;
-      smooth.final = lerp(smooth.final, finalSignal, .18);
-      signalText.textContent = smooth.final.toFixed(2);
-
-      let zone = 'center';
-      if(smooth.final < -0.34) zone = 'left';
-      if(smooth.final > 0.34) zone = 'right';
-      selection.zone = zone;
-      directionText.textContent = zone==='left' ? 'Esquerda' : zone==='right' ? 'Direita' : 'Centro';
-
-      if(!framingGood) observationText.textContent = `Enquadramento fora da zona ideal. ${guideHint.textContent}`;
-      else if(!calibration.values) observationText.textContent = 'Faça a calibração para máxima precisão.';
-      else observationText.textContent = 'Jogo pronto. Use olhar fixo para confirmar portas.';
-
-      if(ear < .18 && game.started){ selection.dwell = Math.max(0, selection.dwell - 14); }
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      if (simulateInterval) clearInterval(simulateInterval);
+      hudMode.textContent = 'Parado';
     }
 
-    function difficultyConfig(){
-      const d = difficultySelect.value;
-      return d==='easy' ? { dwellNeed: 50, roundLimit: 5600 } : d==='hard' ? { dwellNeed: 82, roundLimit: 3400 } : { dwellNeed: 64, roundLimit: 4400 };
+    function resizeOverlay() {
+      const rect = video.getBoundingClientRect();
+      overlay.width = rect.width;
+      overlay.height = rect.height;
+      drawOverlayFrame();
     }
 
-    function startGame(){
-      if(!video.srcObject){ observationText.textContent = 'Ligue a câmera antes.'; return; }
-      if(!calibration.values){ observationText.textContent = 'Faça a calibração antes para precisão adequada.'; return; }
-      if(game.started){ game.started = false; cancelAnimationFrame(gameRaf); startBtn.textContent = 'Iniciar jogo'; statusText.textContent='Parado'; return; }
-      game.started = true; game.score = 0; game.mistakes = 0; game.round = 0; selection.dwell = 0; selection.locked = false;
-      scoreText.textContent = '0'; mistakesText.textContent = '0'; startBtn.textContent = 'Encerrar jogo'; statusText.textContent = 'Jogando'; nextRound(); gameLoop();
+    function drawOverlayFrame() {
+      ctx.clearRect(0, 0, overlay.width, overlay.height);
+
+      const w = overlay.width;
+      const h = overlay.height;
+      if (!w || !h) return;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.68)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 10]);
+      ctx.strokeRect(w * 0.26, h * 0.1, w * 0.48, h * 0.8);
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.beginPath();
+      ctx.arc(w * 0.5, h * 0.22, 34, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(76, 215, 160, 0.95)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(w * 0.5, h * 0.28);
+      ctx.lineTo(w * 0.5, h * 0.58);
+      ctx.moveTo(w * 0.36, h * 0.38);
+      ctx.lineTo(w * 0.64, h * 0.38);
+      ctx.moveTo(w * 0.5, h * 0.58);
+      ctx.lineTo(w * 0.4, h * 0.8);
+      ctx.moveTo(w * 0.5, h * 0.58);
+      ctx.lineTo(w * 0.6, h * 0.8);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.font = '600 15px Inter, sans-serif';
+      ctx.fillText('Área de calibração', w * 0.05, h * 0.08);
     }
 
-    function nextRound(){
-      const zones = ['left','center','right'];
-      game.promptZone = zones[Math.floor(Math.random()*3)];
-      game.answered = false; game.roundStart = performance.now(); game.round += 1; selection.dwell = 0; selection.locked = false; targetText.textContent = game.promptZone==='left' ? 'Esquerda' : game.promptZone==='right' ? 'Direita' : 'Centro';
+    function drawOverlayLoop() {
+      drawOverlayFrame();
+      animationFrame = requestAnimationFrame(drawOverlayLoop);
     }
 
-    function evaluateChoice(zone){
-      if(game.answered) return;
-      game.answered = true; selection.locked = true;
-      if(zone === game.promptZone){ game.score += 10; scoreText.textContent = String(game.score); statusText.textContent = 'Acertou'; observationText.textContent = 'Boa escolha. Próxima rodada em instantes.'; }
-      else { game.mistakes += 1; mistakesText.textContent = String(game.mistakes); statusText.textContent = 'Errou'; observationText.textContent = 'Escolha incorreta. Tente fixar melhor o olhar na próxima.'; }
-      setTimeout(() => { if(game.started) nextRound(); }, game.nextDelay);
-    }
+    function simulateSession() {
+      if (simulateInterval) clearInterval(simulateInterval);
+      holdSeconds = 0;
+      hudMode.textContent = 'Simulando';
 
-    function drawGame(){
-      const w = game.w, h = game.h; gameCtx.clearRect(0,0,w,h); gameCtx.fillStyle = '#0c1730'; gameCtx.fillRect(0,0,w,h);
-      const laneW = w / 3; const cfg = difficultyConfig(); game.roundLimit = cfg.roundLimit; const dwellNeed = cfg.dwellNeed;
-      const labels = ['ESQUERDA','CENTRO','DIREITA']; const zones = ['left','center','right'];
-      for(let i=0;i<3;i++){
-        const x = i * laneW + 14, y = 58, bw = laneW - 28, bh = h - 108;
-        const isTarget = zones[i] === game.promptZone; const isLook = zones[i] === selection.zone;
-        gameCtx.fillStyle = isTarget ? 'rgba(79,140,255,.14)' : 'rgba(255,255,255,.03)';
-        gameCtx.strokeStyle = isLook ? '#22d3ee' : 'rgba(255,255,255,.12)'; gameCtx.lineWidth = isLook ? 3 : 1;
-        roundRect(gameCtx, x, y, bw, bh, 24, true, true);
-        gameCtx.fillStyle = '#dbe7ff'; gameCtx.font = '700 18px Arial'; gameCtx.textAlign = 'center'; gameCtx.fillText(labels[i], x + bw/2, 92);
-        if(isTarget){ gameCtx.font = '60px Arial'; gameCtx.fillText('⭐', x + bw/2, y + bh/2 + 14); }
-        if(isLook){
-          const progress = zones[i] === selection.zone ? selection.dwell / dwellNeed : 0;
-          gameCtx.fillStyle = 'rgba(34,211,238,.18)'; roundRect(gameCtx, x + 18, h - 62, bw - 36, 18, 9, true, false);
-          gameCtx.fillStyle = '#22d3ee'; roundRect(gameCtx, x + 18, h - 62, Math.max(0, (bw - 36) * Math.min(progress,1)), 18, 9, true, false);
+      simulateInterval = setInterval(() => {
+        holdSeconds += 1;
+        simulatedStability = Math.max(45, Math.min(98, Math.round(65 + Math.random() * 30)));
+        hudStability.textContent = `${simulatedStability}%`;
+        hudHold.textContent = `${holdSeconds} s`;
+
+        criteria[0].value = clamp(Math.round(simulatedStability / 10), 0, 10);
+        criteria[1].value = clamp(Math.round((simulatedStability - 5) / 10), 0, 10);
+        criteria[2].value = clamp(Math.round((simulatedStability - 8) / 10), 0, 10);
+        criteria[3].value = clamp(Math.round((simulatedStability - 10) / 10), 0, 10);
+        criteria[4].value = clamp(Math.round(holdSeconds / 2), 0, 10);
+        criteria[5].value = clamp(Math.round((simulatedStability - 12) / 10), 0, 10);
+
+        renderCriteria();
+        updateComputedState();
+
+        if (holdSeconds >= 12) {
+          clearInterval(simulateInterval);
+          hudMode.textContent = 'Simulação concluída';
         }
-      }
-
-      const elapsed = performance.now() - game.roundStart; const remain = Math.max(0, 1 - elapsed / game.roundLimit);
-      gameCtx.fillStyle = 'rgba(255,255,255,.12)'; roundRect(gameCtx, 24, 18, w - 48, 16, 8, true, false);
-      gameCtx.fillStyle = remain > .35 ? '#4f8cff' : '#f43f5e'; roundRect(gameCtx, 24, 18, (w - 48) * remain, 16, 8, true, false);
-
-      if(!game.answered){
-        if(selection.zone !== 'center' || game.promptZone === 'center') selection.dwell += selection.zone === game.promptZone ? 1.35 : selection.zone !== 'center' ? .5 : .75;
-        else selection.dwell = Math.max(0, selection.dwell - .7);
-      }
-      selection.dwell = clamp(selection.dwell, 0, dwellNeed);
-      dwellText.textContent = `${Math.round((selection.dwell / dwellNeed) * 100)}%`;
-      if(selection.dwell >= dwellNeed && !selection.locked) evaluateChoice(selection.zone);
-      if(elapsed >= game.roundLimit && !game.answered) evaluateChoice('timeout');
+      }, 1000);
     }
 
-    function gameLoop(){ if(!game.started) return; drawGame(); gameRaf = requestAnimationFrame(gameLoop); }
-    function roundRect(ctx, x, y, w, h, r, fill, stroke){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); if(fill) ctx.fill(); if(stroke) ctx.stroke(); }
-
-    async function renderFaceLoop(){
-      if(video.readyState >= 2 && faceLandmarker){
-        const nowMs = performance.now();
-        if(lastVideoTime !== video.currentTime){
-          lastVideoTime = video.currentTime;
-          const results = faceLandmarker.detectForVideo(video, nowMs);
-          drawFaceGuide(results); analyzeFace(results);
-        }
-      }
-      rafId = requestAnimationFrame(renderFaceLoop);
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
     }
 
-    function saveSnapshot(){ const link = document.createElement('a'); link.download = `eye-focus-doors-${Date.now()}.png`; link.href = gameCanvas.toDataURL('image/png'); link.click(); }
+    function exportChartAsPNG() {
+      if (!chart) return;
+      const link = document.createElement('a');
+      const patient = (document.getElementById('patientName').value.trim() || 'paciente').replace(/\s+/g, '_').toLowerCase();
+      const date = document.getElementById('sessionDate').value || new Date().toISOString().slice(0,10);
+      link.href = chart.toBase64Image('image/png', 1);
+      link.download = `grafico_equilibrio_${patient}_${date}.png`;
+      link.click();
+    }
 
-    cameraBtn.addEventListener('click', startCamera);
-    calibrateBtn.addEventListener('click', beginCalibration);
-    startBtn.addEventListener('click', startGame);
-    snapshotBtn.addEventListener('click', saveSnapshot);
-    window.addEventListener('resize', resizeCanvases);
-    resizeCanvases(); renderFaceLoop();
-  </script></body>
+    function loadDemoData() {
+      const demo = [
+        { id: 1, patient: 'Maria Oliveira', therapist: 'Dra. Ana', date: '2026-03-10', exercise: 'Apoio bipodal', classification: 'Risco moderado', score: 48, level: 'Baixo', risk: 'Elevado', notes: '' },
+        { id: 2, patient: 'Maria Oliveira', therapist: 'Dra. Ana', date: '2026-03-14', exercise: 'Transferência lateral', classification: 'Risco moderado', score: 58, level: 'Moderado', risk: 'Moderado', notes: '' },
+        { id: 3, patient: 'Maria Oliveira', therapist: 'Dra. Ana', date: '2026-03-18', exercise: 'Treino misto', classification: 'Risco moderado', score: 67, level: 'Moderado', risk: 'Moderado', notes: '' },
+        { id: 4, patient: 'Maria Oliveira', therapist: 'Dra. Ana', date: '2026-03-23', exercise: 'Treino misto', classification: 'Baixo risco', score: 76, level: 'Bom', risk: 'Moderado', notes: '' },
+        { id: 5, patient: 'Maria Oliveira', therapist: 'Dra. Ana', date: '2026-03-28', exercise: 'Apoio unipodal', classification: 'Baixo risco', score: 84, level: 'Bom', risk: 'Baixo', notes: '' }
+      ];
+      saveSessions(demo);
+      renderSessions();
+      buildChart();
+      updateComputedState();
+      document.getElementById('patientName').value = 'Maria Oliveira';
+      document.getElementById('therapistName').value = 'Dra. Ana';
+    }
+
+    document.getElementById('startCameraBtn').addEventListener('click', startCamera);
+    document.getElementById('simulateBtn').addEventListener('click', simulateSession);
+    document.getElementById('stopBtn').addEventListener('click', stopAllMedia);
+    document.getElementById('saveSessionBtn').addEventListener('click', saveCurrentSession);
+    document.getElementById('resetBtn').addEventListener('click', resetEvaluation);
+    document.getElementById('exportChartBtn').addEventListener('click', exportChartAsPNG);
+    document.getElementById('loadDemoBtn').addEventListener('click', loadDemoData);
+    window.addEventListener('resize', resizeOverlay);
+
+    renderCriteria();
+    updateComputedState();
+    renderSessions();
+    buildChart();
+  </script>
+</body>
 </html>
