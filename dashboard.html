@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EquiThera Premium - Desempenho</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app dashboard-layout">
+    <header class="panel hero-panel">
+      <div>
+        <div class="brand">EquiThera Premium</div>
+        <p class="muted">Tela 2 • Teste clínico padronizado, desempenho e relatório</p>
+      </div>
+      <div class="hero-metrics">
+        <div><span>Tentativa atual</span><strong id="attemptNumber">1</strong></div>
+        <div><span>Status</span><strong id="dashboardStatus">Aguardando câmera</strong></div>
+      </div>
+    </header>
+
+    <section class="dashboard-grid">
+      <div class="panel mission-panel">
+        <h2>Teste guiado</h2>
+        <div class="mission-box">
+          <span>Missão atual</span>
+          <strong id="missionTitle">Aguardando início</strong>
+          <p id="missionHelp" class="muted">Abra a tela da câmera, inicie a webcam e depois comece a tentativa aqui.</p>
+        </div>
+        <div class="target-stage">
+          <canvas id="targetCanvas" width="900" height="360"></canvas>
+        </div>
+        <div class="grid-4 compact-grid">
+          <div class="metric-card"><span>Tempo da fase</span><strong id="phaseTime">0.0 s</strong></div>
+          <div class="metric-card"><span>Centro estável</span><strong id="stabilityPct">0%</strong></div>
+          <div class="metric-card"><span>Pé direito</span><strong id="rightFootState">—</strong></div>
+          <div class="metric-card"><span>Pé esquerdo</span><strong id="leftFootState">—</strong></div>
+        </div>
+        <div class="button-grid two-row">
+          <button id="startAttemptBtn" class="btn primary">Iniciar tentativa</button>
+          <button id="resetAttemptBtn" class="btn ghost">Resetar tentativa</button>
+          <button id="saveAttemptBtn" class="btn secondary">Salvar tentativa</button>
+          <button id="exportChartBtn" class="btn secondary">Exportar gráfico PNG</button>
+        </div>
+      </div>
+
+      <div class="panel scoring-panel">
+        <h2>Desempenho clínico</h2>
+        <div class="grid-2 compact-grid">
+          <div class="metric-card"><span>Score global</span><strong id="globalScore">0</strong></div>
+          <div class="metric-card"><span>Tentativa</span><strong id="attemptLabel">Tentativa 1</strong></div>
+          <div class="metric-card"><span>Centro estático</span><strong id="staticScore">0</strong></div>
+          <div class="metric-card"><span>Pé direito</span><strong id="rightScore">0</strong></div>
+          <div class="metric-card"><span>Pé esquerdo</span><strong id="leftScore">0</strong></div>
+          <div class="metric-card"><span>Data</span><strong id="attemptDate">—</strong></div>
+        </div>
+        <div class="notes-block">
+          <label>Observações clínicas
+            <textarea id="clinicalNotes" placeholder="Ex.: instabilidade leve à direita, melhor resposta no retorno ao centro."></textarea>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel chart-panel span-2">
+        <div class="chart-header">
+          <div>
+            <h2>Relatório gráfico clínico</h2>
+            <p class="muted">Eixo por tentativa com a data da tentativa no rótulo.</p>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="reportChart"></canvas></div>
+      </div>
+    </section>
+  </div>
+  <script src="dashboard.js"></script>
+</body>
+</html>
